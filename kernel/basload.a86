@@ -1,7 +1,11 @@
 ; BASLOAD.A86 - BASIC wording for the existing second-stage loading message.
 ; Exactly 21 characters plus NUL; all following data and addresses stay fixed.
-	cseg
-	org	78bbh
+
+;-----------------------------------------------------------------------------
+; DATA ONLY: fixed-width loader-message overlay; no instructions.
+;-----------------------------------------------------------------------------
+        cseg
+        org     78bbh
 loading_message:
-	db	'Loading MBASIC-86... ',0
-	end
+        db      'Loading MBASIC-86... ',0
+        end

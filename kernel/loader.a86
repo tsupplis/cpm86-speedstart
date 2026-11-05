@@ -8,133 +8,161 @@
 ; The complement loop deliberately extends past the stored kernel CODE group.
 ; Original read retries, boot assumptions, padding and final zero are retained.
 ;-----------------------------------------------------------------------------
-	cseg
-	org	7800h
+        cseg
+        org     7800h
+
+;-----------------------------------------------------------------------------
+; CODE: initialize, read the fixed kernel layout and enter the BIOS.
+;-----------------------------------------------------------------------------
 loader:
-	cli
-	mov	ax,cs
-	mov	ds,ax
-	mov	ss,ax
-	mov	sp,7800h
-	sti
-	mov	si,offset loading_message
-	call	print_string
-	mov	ah,0
-	int	13h		; reset original boot drive
-	jnc	disk_ready
-	jmp	disk_error
+        cli
+        mov     ax,cs
+        mov     ds,ax
+        mov     ss,ax
+        mov     sp,7800h
+        sti
+        mov     si,offset loading_message
+        call    print_string
+        mov     ah,0
+        int     13h                               ; reset original boot drive
+        jnc     disk_ready
+        jmp     disk_error
 disk_ready:
-	mov	ax,0051h
-	mov	es,ax
-	sub	dx,dx
-	mov	bx,dx
-	mov	ch,1
-	call	read_track
+        mov     ax,0051h
+        mov     es,ax
+        sub     dx,dx
+        mov     bx,dx
+        mov     ch,1
+        call    read_track
 ; Strip the entry's unused low user bits and filename attribute bits before
 ; comparing the 12-byte directory signature (user + "SPEED   STR").
-	and	es:user_number,0f0h
-	and	es:extension_attributes,7f7fh
-	mov	di,0
-	mov	si,offset speed_name
-	mov	cx,12
-	repe	cmpsb
-	jnz	wrong_disk
+        and     es:user_number,0f0h
+        and     es:extension_attributes,7f7fh
+        mov     di,0
+        mov     si,offset speed_name
+        mov     cx,12
+        repe    cmpsb
+        jnz     wrong_disk
 ; Compact the CODE bytes already loaded after directory and CMD header.
-	push	ds
-	mov	ax,es
-	mov	ds,ax
-	mov	si,0880h
-	mov	di,0
-	mov	cx,0780h
-	add	bx,cx
-	rep	movsb
-	pop	ds
-	mov	ch,2
-	call	read_track
-	call	next_track
-	call	next_track
-	call	next_track
-	mov	cx,3000h	; 12288 words, not merely the stored CODE length
-	mov	ax,0ffffh
-	mov	bx,0
+        push    ds
+        mov     ax,es
+        mov     ds,ax
+        mov     si,0880h
+        mov     di,0
+        mov     cx,0780h
+        add     bx,cx
+        rep     movsb
+        pop     ds
+        mov     ch,2
+        call    read_track
+        call    next_track
+        call    next_track
+        call    next_track
+        mov     cx,3000h                          ; 12288 words, not merely the stored CODE length
+        mov     ax,0ffffh
+        mov     bx,0
 complement_kernel:
-	xor	es:word ptr [bx],ax
-	add	bx,2
-	loop	complement_kernel
-	jmpf	dword ptr bios_entry
+        xor     es:word ptr [bx],ax
+        add     bx,2
+        loop    complement_kernel
+        jmpf    dword ptr bios_entry
+
+;-----------------------------------------------------------------------------
+; CODE: disk-read/retry and text-output helpers.
+;-----------------------------------------------------------------------------
 next_track:
-	add	bx,1000h	; eight physical sectors per ordinary track
+        add     bx,1000h                          ; eight physical sectors per ordinary track
 read_track:
-	mov	al,8
-	mov	cl,1
-	push	ax
-	push	bx
-	mov	ax,0e2eh	; teletype progress dot
-	sub	bx,bx
-	int	10h
-	pop	bx
-	pop	ax
+        mov     al,8
+        mov     cl,1
+        push    ax
+        push    bx
+        mov     ax,0e2eh                          ; teletype progress dot
+        sub     bx,bx
+        int     10h
+        pop     bx
+        pop     ax
 retry_read:
-	mov	ah,2
-	int	13h
-	jc	read_failed
-	inc	ch
-	ret
+        mov     ah,2
+        int     13h
+        jc      read_failed
+        inc     ch
+        ret
 read_failed:
-	dec	retries
-	jnz	retry_read
+        dec     retries
+        jnz     retry_read
 disk_error:
-	mov	si,offset disk_error_message
-	jmps	show_error
+        mov     si,offset disk_error_message
+        jmps    show_error
 wrong_disk:
-	mov	si,offset wrong_disk_message
+        mov     si,offset wrong_disk_message
 show_error:
-	call	print_string
+        call    print_string
 hang:
-	sti
-	jmps	hang
+        sti
+        jmps    hang
 print_string:
-	cld
-	lodsb
+        cld
+        lodsb
 print_character:
-	mov	ah,0eh
-	sub	bx,bx
-	int	10h
-	lodsb
-	test	al,al
-	jnz	print_character
-	ret
+        mov     ah,0eh
+        sub     bx,bx
+        int     10h
+        lodsb
+        test    al,al
+        jnz     print_character
+        ret
+
+;-----------------------------------------------------------------------------
+; DATA: far entry pointer, retry count, filename and messages.
+;-----------------------------------------------------------------------------
 bios_vector:
-	dw	2500h,0051h
-retry_count	db	4
+        dw      2500h,0051h
+retry_count     db      4
 loading_message:
-	db	'Loading DR LOGO (tm).',0
+        db      'Loading DR LOGO (tm).',0
 speed_name:
-	db	0,'SPEED   STR'
+        db      0,'SPEED   STR'
 disk_error_message:
-	db	13,10,10,'*** Disk Error ***    Cannot Load Speedstart',13,10,0
+        db      13,10,10,'*** Disk Error ***    Cannot Load Speedstart',13,10,0
 wrong_disk_message:
-	db	13,10,10,'*** No SPEED.STR file on this diskette ***',13,10,0
+        db      13,10,10,'*** No SPEED.STR file on this diskette ***',13,10,0
 ; Unused original sector fill.
-	db	0e5h,0e5h,0e5h,0e5h,0e5h,0e5h,0e5h,0e5h,0e5h,0e5h,0e5h,0e5h,0e5h,0e5h,0e5h,0e5h
-	db	0e5h,0e5h,0e5h,0e5h,0e5h,0e5h,0e5h,0e5h,0e5h,0e5h,0e5h,0e5h,0e5h,0e5h,0e5h,0e5h
-	db	0e5h,0e5h,0e5h,0e5h,0e5h,0e5h,0e5h,0e5h,0e5h,0e5h,0e5h,0e5h,0e5h,0e5h,0e5h,0e5h
-	db	0e5h,0e5h,0e5h,0e5h,0e5h,0e5h,0e5h,0e5h,0e5h,0e5h,0e5h,0e5h,0e5h,0e5h,0e5h,0e5h
-	db	0e5h,0e5h,0e5h,0e5h,0e5h,0e5h,0e5h,0e5h,0e5h,0e5h,0e5h,0e5h,0e5h,0e5h,0e5h,0e5h
-	db	0e5h,0e5h,0e5h,0e5h,0e5h,0e5h,0e5h,0e5h,0e5h,0e5h,0e5h,0e5h,0e5h,0e5h,0e5h,0e5h
-	db	0e5h,0e5h,0e5h,0e5h,0e5h,0e5h,0e5h,0e5h,0e5h,0e5h,0e5h,0e5h,0e5h,0e5h,0e5h,0e5h
-	db	0e5h,0e5h,0e5h,0e5h,0e5h,0e5h,0e5h,0e5h,0e5h,0e5h,0e5h,0e5h,0e5h,0e5h,0e5h,0e5h
-	db	0e5h,0e5h,0e5h,0e5h,0e5h,0e5h,0e5h,0e5h,0e5h,0e5h,0e5h,0e5h,0e5h,0e5h,0e5h,0e5h
-	db	0e5h,0e5h,0e5h,0e5h,0e5h,0e5h,0e5h,0e5h,0e5h,0e5h,0e5h,0e5h,0e5h,0e5h,0e5h,0e5h
-	db	0e5h,0e5h,0e5h,0e5h,0e5h,0e5h,0e5h,0e5h,0e5h,0e5h,0e5h,0e5h,0e5h,0e5h,0e5h,0e5h
-	db	0e5h,0e5h,0e5h,0e5h,0e5h,0e5h,0e5h,0e5h,0e5h,0e5h,0e5h,0e5h,0e5h,0e5h,0e5h,0e5h
-	db	0
-	dseg
-	org	0
-user_number	rb	1
-	org	9
-extension_attributes	rw	1
-	org	78b6h
-bios_entry	rw	2
-retries	rb	1
-	end
+        db      0e5h,0e5h,0e5h,0e5h,0e5h,0e5h,0e5h,0e5h
+        db      0e5h,0e5h,0e5h,0e5h,0e5h,0e5h,0e5h,0e5h
+        db      0e5h,0e5h,0e5h,0e5h,0e5h,0e5h,0e5h,0e5h
+        db      0e5h,0e5h,0e5h,0e5h,0e5h,0e5h,0e5h,0e5h
+        db      0e5h,0e5h,0e5h,0e5h,0e5h,0e5h,0e5h,0e5h
+        db      0e5h,0e5h,0e5h,0e5h,0e5h,0e5h,0e5h,0e5h
+        db      0e5h,0e5h,0e5h,0e5h,0e5h,0e5h,0e5h,0e5h
+        db      0e5h,0e5h,0e5h,0e5h,0e5h,0e5h,0e5h,0e5h
+        db      0e5h,0e5h,0e5h,0e5h,0e5h,0e5h,0e5h,0e5h
+        db      0e5h,0e5h,0e5h,0e5h,0e5h,0e5h,0e5h,0e5h
+        db      0e5h,0e5h,0e5h,0e5h,0e5h,0e5h,0e5h,0e5h
+        db      0e5h,0e5h,0e5h,0e5h,0e5h,0e5h,0e5h,0e5h
+        db      0e5h,0e5h,0e5h,0e5h,0e5h,0e5h,0e5h,0e5h
+        db      0e5h,0e5h,0e5h,0e5h,0e5h,0e5h,0e5h,0e5h
+        db      0e5h,0e5h,0e5h,0e5h,0e5h,0e5h,0e5h,0e5h
+        db      0e5h,0e5h,0e5h,0e5h,0e5h,0e5h,0e5h,0e5h
+        db      0e5h,0e5h,0e5h,0e5h,0e5h,0e5h,0e5h,0e5h
+        db      0e5h,0e5h,0e5h,0e5h,0e5h,0e5h,0e5h,0e5h
+        db      0e5h,0e5h,0e5h,0e5h,0e5h,0e5h,0e5h,0e5h
+        db      0e5h,0e5h,0e5h,0e5h,0e5h,0e5h,0e5h,0e5h
+        db      0e5h,0e5h,0e5h,0e5h,0e5h,0e5h,0e5h,0e5h
+        db      0e5h,0e5h,0e5h,0e5h,0e5h,0e5h,0e5h,0e5h
+        db      0e5h,0e5h,0e5h,0e5h,0e5h,0e5h,0e5h,0e5h
+        db      0e5h,0e5h,0e5h,0e5h,0e5h,0e5h,0e5h,0e5h
+        db      0
+
+;-----------------------------------------------------------------------------
+; ADDRESS DECLARATIONS: loaded directory and loader data aliases.
+;-----------------------------------------------------------------------------
+        dseg
+        org     0
+user_number     rb      1
+        org     9
+extension_attributes    rw      1
+        org     78b6h
+bios_entry      rw      2
+retries rb      1
+        end

@@ -4,8 +4,12 @@
 ; No instruction or module moves. Maximum command length remains 127; the
 ; initial ten-character command names MBASIC86.STM through the existing CCP.
 ;-----------------------------------------------------------------------------
-	cseg
-	org	0009h
+
+;-----------------------------------------------------------------------------
+; DATA ONLY: startup-buffer overlay; no instructions.
+;-----------------------------------------------------------------------------
+        cseg
+        org     0009h
 startup_command:
-	db	127,10,'A:MBASIC86',0
-	end
+        db      127,10,'A:MBASIC86',0
+        end
