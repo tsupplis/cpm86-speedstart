@@ -1,9 +1,20 @@
 # SpeedStart CP/M-86 — self-booting BASIC
 
+## Synopsis
+
 Recovered from a **1983 IBM PC DR Logo demo**, the SpeedStart boot code and
 kernel are rebuilt from complete ASM86 disassemblies to boot the supplied
 Microsoft BASIC 5.50A directly on an IBM PC/XT.
 No sibling project or original disk image is needed.
+
+This project is **just for historical enjoyment**. For a practical, usable
+CP/M-86 system or its multitasking descendants, visit:
+
+| Project | System |
+|---|---|
+| [cpm86-kernel](https://github.com/tsupplis/cpm86-kernel) | CP/M-86 |
+| [ccpm86-kernel](https://github.com/tsupplis/ccpm86-kernel) | Concurrent CP/M-86 |
+| [cdos41-kernel](https://github.com/tsupplis/cdos41-kernel) | Concurrent DOS 4.1 |
 
 ![SpeedStart CP/M-86 running Microsoft BASIC](images/speedstart.png)
 
