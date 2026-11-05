@@ -1,0 +1,2365 @@
+; CCP - complete SpeedStart CP/M-86 disassembly.
+; CODE offsets 0000h..0A00h (end exclusive); loaded in segment 0051h.
+; Instructions recovered from the original kernel; data and padding are explicit.
+; Address comments refer to decoded CODE, excluding the 128-byte CMD header.
+; make check verifies the entire reassembled kernel against base/speed.str.
+	cseg
+	org	00000h
+
+cold_entry:	; cold_entry
+	jmp	command_start	; 0000
+
+abort_entry:	; abort_entry
+	jmp	command_start	; 0003
+
+hot_entry:	; hot_entry
+	jmp	command_resume	; 0006
+
+; Max length, current length, command text, then the remainder of the
+; fixed command buffer. basccp.a86 changes only 0009h..0015h for BASIC.
+startup_command:	; startup_command
+	db	07fh,006h,041h,03ah,04ch,04fh,047h,04fh,000h,000h,020h,020h,020h,020h,020h,020h	; 0009 ..A:LOGO..      
+	db	020h,020h,043h,04fh,050h,059h,052h,049h,047h,048h,054h,020h,028h,043h,029h,020h	; 0019   COPYRIGHT (C) 
+	db	031h,039h,038h,033h,02ch,020h,044h,049h,047h,049h,054h,041h,04ch,020h,052h,045h	; 0029 1983, DIGITAL RE
+	db	053h,045h,041h,052h,043h,048h,020h,020h,000h,000h,000h,000h,000h,000h,000h,000h	; 0039 SEARCH  ........
+	db	000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h	; 0049 ................
+	db	000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h	; 0059 ................
+	db	000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h	; 0069 ................
+	db	000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h	; 0079 ................
+	db	000h,000h	; 0089 ..
+
+l008b:	; branch target
+	int	0e0h	; 008B
+	mov	bp,cs	; 008D
+	mov	es,bp	; 008F
+	ret	; 0091
+
+l0092:	; branch target
+	mov	cl,00h	; 0092
+	xor	dx,dx	; 0094
+	jmps	l008b	; 0096
+
+l0098:	; branch target
+	mov	dl,al	; 0098
+	mov	cl,02h	; 009A
+	jmps	l008b	; 009C
+
+l009e:	; branch target
+	mov	al,20h	; 009E
+
+l00a0:	; branch target
+	push	cx	; 00A0
+	call	l0098	; 00A1
+	pop	cx	; 00A4
+	ret	; 00A5
+
+l00a6:	; branch target
+	mov	al,0dh	; 00A6
+	call	l00a0	; 00A8
+	mov	al,0ah	; 00AB
+	jmps	l00a0	; 00AD
+
+l00af:	; branch target
+	push	cx	; 00AF
+	call	l00a6	; 00B0
+	pop	bx	; 00B3
+
+l00b4:	; branch target
+	mov	al,[bx]	; 00B4
+	or	al,al	; 00B6
+	jnz	l00bb	; 00B8
+	ret	; 00BA
+
+l00bb:	; branch target
+	inc	bx	; 00BB
+	push	bx	; 00BC
+	call	l0098	; 00BD
+	pop	bx	; 00C0
+	jmps	l00b4	; 00C1
+
+l00c3:	; branch target
+	mov	dx,0827h	; 00C3
+	mov	cl,3bh	; 00C6
+	jmps	l011c	; 00C8
+
+l00ca:	; branch target
+	mov	cx,32h	; 00CA
+	mov	dx,0930h	; 00CD
+	jmps	l008b	; 00D0
+
+l00d2:	; branch target
+	mov	cl,3ah	; 00D2
+	jmps	l008b	; 00D4
+
+l00d6:	; branch target
+	mov	cl,0dh	; 00D6
+	jmps	l011c	; 00D8
+
+l00da:	; branch target
+	mov	dl,al	; 00DA
+	mov	cl,0eh	; 00DC
+	jmps	l011c	; 00DE
+
+l00e0:	; branch target
+	mov	byte ptr .0847h,00h	; 00E0
+	mov	dx,0827h	; 00E5
+
+l00e8:	; branch target
+	mov	cl,0fh	; 00E8
+
+l00ea:	; branch target
+	call	l011c	; 00EA
+	mov	.08cdh,al	; 00ED
+	inc	al	; 00F0
+	ret	; 00F2
+
+l00f3:	; branch target
+	mov	cl,10h	; 00F3
+	call	l00ea	; 00F5
+	jz	l00fb	; 00F8
+	ret	; 00FA
+
+l00fb:	; branch target
+	mov	cx,0993h	; 00FB
+	jmps	l013e	; 00FE
+
+l0100:	; branch target
+	mov	cl,11h	; 0100
+	jmps	l00ea	; 0102
+
+l0104:	; branch target
+	mov	cl,12h	; 0104
+	jmps	l00ea	; 0106
+
+l0108:	; branch target
+	mov	dx,0827h	; 0108
+	jmps	l0100	; 010B
+
+l010d:	; branch target
+	mov	cl,13h	; 010D
+	jmps	l011c	; 010F
+
+l0111:	; branch target
+	mov	dx,0827h	; 0111
+
+l0114:	; branch target
+	mov	cl,14h	; 0114
+	call	l011c	; 0116
+	or	al,al	; 0119
+
+l011b:	; branch target
+	ret	; 011B
+
+l011c:	; branch target
+	call	l008b	; 011C
+	cmp	al,0ffh	; 011F
+	jnz	l011b	; 0121
+	test	ah,ah	; 0123
+	jz	l011b	; 0125
+	cmp	ah,04h	; 0127
+	ja	l011b	; 012A
+	dec	ah	; 012C
+	mov	bl,ah	; 012E
+	sub	bh,bh	; 0130
+	shl	bx,1	; 0132
+	mov	cx,09beh[bx]	; 0134
+	call	l00af	; 0138
+	jmp	command_resume	; 013B
+
+l013e:	; branch target
+	call	l00af	; 013E
+	jmp	l0739	; 0141
+
+l0144:	; branch target
+	mov	cl,17h	; 0144
+	jmps	l011c	; 0146
+	mov	dl,0ffh	; 0148
+
+l014a:	; branch target
+	mov	cl,20h	; 014A
+	jmp	l008b	; 014C
+
+l014f:	; branch target
+	cmp	al,61h	; 014F
+	jc	l0159	; 0151
+	cmp	al,7bh	; 0153
+	jnc	l0159	; 0155
+	and	al,5fh	; 0157
+
+l0159:	; branch target
+	ret	; 0159
+
+l015a:	; branch target
+	test	byte ptr .0805h,0ffh	; 015A
+	jz	l01b9	; 015F
+	test	byte ptr .0939h,0ffh	; 0161
+	jz	l016d	; 0166
+	xor	ax,ax	; 0168
+	call	l00da	; 016A
+
+l016d:	; branch target
+	mov	dx,0806h	; 016D
+	call	l00e8	; 0170
+	jz	l01b9	; 0173
+	mov	al,.0815h	; 0175
+	dec	al	; 0178
+	mov	.0826h,al	; 017A
+	mov	dx,0806h	; 017D
+	call	l0114	; 0180
+	jnz	l01b9	; 0183
+	mov	di,0ah	; 0185
+	mov	si,084bh	; 0188
+	mov	cx,80h	; 018B
+	call	l042b	; 018E
+	mov	byte ptr .0814h,00h	; 0191
+	dec	byte ptr .0815h	; 0196
+	mov	dx,0806h	; 019A
+	call	l00f3	; 019D
+	jz	l01b9	; 01A0
+	mov	al,.0939h	; 01A2
+	call	l00da	; 01A5
+	mov	bx,0bh	; 01A8
+	call	l00b4	; 01AB
+	call	l01e3	; 01AE
+	jz	l01c4	; 01B1
+	call	l020c	; 01B3
+	jmp	command_start	; 01B6
+
+l01b9:	; branch target
+	call	l020c	; 01B9
+	mov	cl,0ah	; 01BC
+	mov	dx,09h	; 01BE
+	call	l008b	; 01C1
+
+l01c4:	; branch target
+	mov	bx,0bh	; 01C4
+	xor	cx,cx	; 01C7
+	mov	cl,cs:.0ah	; 01C9
+	jcxz	l01da	; 01CE
+
+l01d0:	; branch target
+	mov	al,[bx]	; 01D0
+	call	l014f	; 01D2
+	mov	[bx],al	; 01D5
+	inc	bx	; 01D7
+	loop	l01d0	; 01D8
+
+l01da:	; branch target
+	mov	[bx],ch	; 01DA
+	mov	word ptr .0935h,0bh	; 01DC
+	ret	; 01E2
+
+l01e3:	; branch target
+	mov	cl,0bh	; 01E3
+	call	l008b	; 01E5
+	or	al,al	; 01E8
+	jnz	l01ed	; 01EA
+	ret	; 01EC
+
+l01ed:	; branch target
+	mov	cl,01h	; 01ED
+	call	l008b	; 01EF
+	or	al,al	; 01F2
+	ret	; 01F4
+
+l01f5:	; branch target
+	mov	cl,19h	; 01F5
+	jmps	l0209	; 01F7
+
+l01f9:	; branch target
+	mov	cl,33h	; 01F9
+	jmps	l0209	; 01FB
+
+l01fd:	; branch target
+	mov	dx,.0803h	; 01FD
+	call	l01f9	; 0201
+	mov	dx,80h	; 0204
+
+l0207:	; branch target
+	mov	cl,1ah	; 0207
+
+l0209:	; branch target
+	jmp	l008b	; 0209
+
+l020c:	; branch target
+	test	byte ptr .0805h,0ffh	; 020C
+	jnz	l0214	; 0211
+	ret	; 0213
+
+l0214:	; branch target
+	mov	al,00h	; 0214
+	mov	.0805h,al	; 0216
+	call	l00da	; 0219
+	mov	dx,0806h	; 021C
+	call	l010d	; 021F
+	mov	al,.0939h	; 0222
+	jmp	l00da	; 0225
+
+l0228:	; branch target
+	mov	al,[si]	; 0228
+	or	al,al	; 022A
+	jnz	l022f	; 022C
+	ret	; 022E
+
+l022f:	; branch target
+	cmp	al,20h	; 022F
+	jnc	l0236	; 0231
+	jmp	l03b5	; 0233
+
+l0236:	; branch target
+	push	di	; 0236
+	mov	di,093bh	; 0237
+	mov	cx,09h	; 023A
+	cld	; 023D
+	repne	scasb	; 023E
+	pop	di	; 0240
+	ret	; 0241
+
+l0242:	; branch target
+	mov	al,[si]	; 0242
+	cmp	al,00h	; 0244
+	jnz	l0249	; 0246
+	ret	; 0248
+
+l0249:	; branch target
+	cmp	al,20h	; 0249
+	jz	l024e	; 024B
+	ret	; 024D
+
+l024e:	; branch target
+	inc	si	; 024E
+	jmps	l0242	; 024F
+
+l0251:	; branch target
+	inc	bx	; 0251
+	mov	byte ptr [bx],20h	; 0252
+	loop	l0251	; 0255
+	ret	; 0257
+
+l0258:	; branch target
+	push	cx	; 0258
+	call	l0228	; 0259
+	pop	cx	; 025C
+	jz	l0251	; 025D
+	inc	bx	; 025F
+	cmp	al,2ah	; 0260
+	jnz	l0268	; 0262
+	mov	al,3fh	; 0264
+	jmps	l0269	; 0266
+
+l0268:	; branch target
+	inc	si	; 0268
+
+l0269:	; branch target
+	mov	[bx],al	; 0269
+	loop	l0258	; 026B
+
+l026d:	; branch target
+	call	l0228	; 026D
+	jz	l0275	; 0270
+	inc	si	; 0272
+	jmps	l026d	; 0273
+
+l0275:	; branch target
+	ret	; 0275
+
+l0276:	; branch target
+	mov	ax,00h	; 0276
+
+l0279:	; branch target
+	mov	bx,0827h	; 0279
+	add	bx,ax	; 027C
+	push	bx	; 027E
+	mov	byte ptr .093ah,00h	; 027F
+	mov	si,.0935h	; 0284
+	call	l0242	; 0288
+	mov	.0937h,si	; 028B
+	jz	l0299	; 028F
+	sbb	al,40h	; 0291
+	cmp	byte ptr 01h[si],3ah	; 0293
+	jz	l029e	; 0297
+
+l0299:	; branch target
+	mov	al,.0939h	; 0299
+	jmps	l02b0	; 029C
+
+l029e:	; branch target
+	cmp	al,10h	; 029E
+	ja	l02a6	; 02A0
+	cmp	al,00h	; 02A2
+	ja	l02ab	; 02A4
+
+l02a6:	; branch target
+	mov	ah,0ffh	; 02A6
+	pop	bx	; 02A8
+	jmps	l02e4	; 02A9
+
+l02ab:	; branch target
+	mov	.093ah,al	; 02AB
+	inc	si	; 02AE
+	inc	si	; 02AF
+
+l02b0:	; branch target
+	mov	[bx],al	; 02B0
+	mov	cx,08h	; 02B2
+	call	l0258	; 02B5
+	mov	cx,03h	; 02B8
+	cmp	al,2eh	; 02BB
+	jnz	l02c0	; 02BD
+	inc	si	; 02BF
+
+l02c0:	; branch target
+	call	l0258	; 02C0
+	inc	bx	; 02C3
+	mov	di,bx	; 02C4
+	mov	ax,cx	; 02C6
+	mov	cx,03h	; 02C8
+	cld	; 02CB
+	xor	ax,ax	; 02CC
+	rep	stosb	; 02CE
+	mov	.0935h,si	; 02D0
+	pop	bx	; 02D4
+	mov	cx,0bh	; 02D5
+
+l02d8:	; branch target
+	inc	bx	; 02D8
+	cmp	byte ptr [bx],3fh	; 02D9
+	jnz	l02e0	; 02DC
+	inc	ah	; 02DE
+
+l02e0:	; branch target
+	loop	l02d8	; 02E0
+	mov	al,[si]	; 02E2
+
+l02e4:	; branch target
+	or	ah,ah	; 02E4
+	ret	; 02E6
+
+l02e7:	; branch target
+	mov	di,0944h	; 02E7
+	mov	bx,04h	; 02EA
+
+l02ed:	; branch target
+	mov	si,0828h	; 02ED
+	mov	cx,04h	; 02F0
+	repe	cmpsb	; 02F3
+	jz	l02ff	; 02F5
+	add	di,cx	; 02F7
+	dec	bx	; 02F9
+	jnz	l02ed	; 02FA
+
+l02fc:	; branch target
+	mov	al,05h	; 02FC
+	ret	; 02FE
+
+l02ff:	; branch target
+	mov	al,[si]	; 02FF
+	cmp	al,20h	; 0301
+	jnz	l02fc	; 0303
+	mov	ax,bx	; 0305
+	ret	; 0307
+
+l0308:	; branch target
+	mov	dx,cs	; 0308
+	call	l01f9	; 030A
+	mov	dx,084bh	; 030D
+	call	l0207	; 0310
+	ret	; 0313
+
+command_resume:	; branch target
+	mov	word ptr .0935h,0bh	; 0314
+	mov	sp,0930h	; 031A
+	call	l0452	; 031D
+	jmps	l0348	; 0320
+
+command_start:	; branch target
+	mov	sp,0930h	; 0322
+	push	cx	; 0325
+	mov	al,cl	; 0326
+	mov	cl,04h	; 0328
+	rcr	al,cl	; 032A
+	and	al,0fh	; 032C
+	mov	dl,al	; 032E
+	mov	.08ceh,al	; 0330
+	call	l014a	; 0333
+	call	l00d6	; 0336
+	mov	.0805h,al	; 0339
+	call	l00d2	; 033C
+	pop	ax	; 033F
+	and	al,0fh	; 0340
+	mov	.0939h,al	; 0342
+	call	l00da	; 0345
+
+l0348:	; branch target
+	call	l0308	; 0348
+	cmp	cs:byte ptr .0ah,00h	; 034B
+	jnz	l036d	; 0351
+
+l0353:	; branch target
+	cld	; 0353
+	mov	sp,0930h	; 0354
+	call	l00a6	; 0357
+	call	l01f5	; 035A
+	add	al,41h	; 035D
+	call	l0098	; 035F
+	mov	al,3eh	; 0362
+	call	l0098	; 0364
+	call	l0308	; 0367
+	call	l015a	; 036A
+
+l036d:	; branch target
+	cld	; 036D
+	call	l01f5	; 036E
+	mov	.0939h,al	; 0371
+	cmp	cs:byte ptr .0bh,3bh	; 0374
+	jz	l0353	; 037A
+	mov	si,.0935h	; 037C
+	call	l0242	; 0380
+	jz	l0353	; 0383
+	call	l0276	; 0385
+	jnz	l03b5	; 0388
+	test	byte ptr .093ah,0ffh	; 038A
+	jz	l0394	; 038F
+	jmp	l0645	; 0391
+
+l0394:	; branch target
+	cmp	byte ptr .0828h,20h	; 0394
+	jz	l03b5	; 0399
+	call	l02e7	; 039B
+	dec	ax	; 039E
+	mov	bx,09aah	; 039F
+	add	bx,ax	; 03A2
+	add	bx,ax	; 03A4
+	mov	dx,[bx]	; 03A6
+	jmp	dx	; 03A8
+
+l03aa:	; branch target
+	mov	cx,0988h	; 03AA
+	jmps	l03b2	; 03AD
+
+l03af:	; branch target
+	mov	cx,0954h	; 03AF
+
+l03b2:	; branch target
+	jmp	l00af	; 03B2
+
+l03b5:	; branch target
+	call	l00a6	; 03B5
+	mov	bx,.0937h	; 03B8
+
+l03bc:	; branch target
+	mov	al,[bx]	; 03BC
+	cmp	al,20h	; 03BE
+	jz	l03ce	; 03C0
+	or	al,al	; 03C2
+	jz	l03ce	; 03C4
+	push	bx	; 03C6
+	call	l0098	; 03C7
+	pop	bx	; 03CA
+	inc	bx	; 03CB
+	jmps	l03bc	; 03CC
+
+l03ce:	; branch target
+	mov	al,3fh	; 03CE
+	call	l0098	; 03D0
+	call	l00a6	; 03D3
+	jmp	command_start	; 03D6
+	call	l0276	; 03D9
+	test	byte ptr .093ah,0ffh	; 03DC
+	jnz	l03b5	; 03E1
+	mov	bx,0828h	; 03E3
+	mov	cx,0bh	; 03E6
+	cmp	byte ptr [bx],20h	; 03E9
+	jnz	l03f1	; 03EC
+	mov	al,21h	; 03EE
+	ret	; 03F0
+
+l03f1:	; branch target
+	mov	al,[bx]	; 03F1
+	cmp	al,20h	; 03F3
+	jz	l041e	; 03F5
+	inc	bx	; 03F7
+	sub	al,30h	; 03F8
+	cmp	al,0ah	; 03FA
+	jnc	l03b5	; 03FC
+	mov	dh,al	; 03FE
+	test	ch,0e0h	; 0400
+	jnz	l03b5	; 0403
+	mov	al,ch	; 0405
+	mov	cl,03h	; 0407
+	rol	al,cl	; 0409
+	add	al,ch	; 040B
+	jc	l03b5	; 040D
+	add	al,ch	; 040F
+	jc	l03b5	; 0411
+	add	al,dh	; 0413
+	jc	l03b5	; 0415
+	mov	ch,al	; 0417
+	dec	cl	; 0419
+	jnz	l03f1	; 041B
+	ret	; 041D
+
+l041e:	; branch target
+	cmp	byte ptr [bx],20h	; 041E
+	jnz	l03b5	; 0421
+	inc	bx	; 0423
+	dec	cl	; 0424
+	jnz	l041e	; 0426
+	mov	al,ch	; 0428
+	ret	; 042A
+
+l042b:	; branch target
+	cld	; 042B
+	rep	movsb	; 042C
+	ret	; 042E
+
+l042f:	; branch target
+	mov	bx,084bh	; 042F
+	mov	ah,00h	; 0432
+	add	al,cl	; 0434
+	add	bx,ax	; 0436
+	mov	al,[bx]	; 0438
+	ret	; 043A
+
+l043b:	; branch target
+	mov	byte ptr .0827h,00h	; 043B
+	mov	al,.093ah	; 0440
+	or	al,al	; 0443
+	jz	l046b	; 0445
+	dec	al	; 0447
+	mov	bx,0939h	; 0449
+	cmp	al,[bx]	; 044C
+	jz	l046b	; 044E
+	jmps	l046f	; 0450
+
+l0452:	; branch target
+	mov	dl,.08ceh	; 0452
+	call	l014a	; 0456
+	jmps	l046c	; 0459
+
+l045b:	; branch target
+	mov	al,.093ah	; 045B
+	or	al,al	; 045E
+	jz	l046b	; 0460
+	dec	al	; 0462
+	mov	bx,0939h	; 0464
+	cmp	al,[bx]	; 0467
+	jnz	l046c	; 0469
+
+l046b:	; branch target
+	ret	; 046B
+
+l046c:	; branch target
+	mov	al,.0939h	; 046C
+
+l046f:	; branch target
+	jmp	l00da	; 046F
+	mov	byte ptr .09b5h,00h	; 0472
+	call	l048a	; 0477
+	cmp	byte ptr .09b4h,00h	; 047A
+	jz	l0487	; 047F
+	mov	cx,09a3h	; 0481
+	call	l00af	; 0484
+
+l0487:	; branch target
+	jmp	l0739	; 0487
+
+l048a:	; branch target
+	mov	byte ptr .09b4h,00h	; 048A
+	call	l0276	; 048F
+	cmp	ah,0ffh	; 0492
+	jnz	l049a	; 0495
+	jmp	l03b5	; 0497
+
+l049a:	; branch target
+	call	l043b	; 049A
+	mov	bx,0828h	; 049D
+	cmp	byte ptr [bx],20h	; 04A0
+	jnz	l04af	; 04A3
+	mov	ch,0bh	; 04A5
+
+l04a7:	; branch target
+	mov	byte ptr [bx],3fh	; 04A7
+	inc	bx	; 04AA
+	dec	ch	; 04AB
+	jnz	l04a7	; 04AD
+
+l04af:	; branch target
+	mov	dl,00h	; 04AF
+	push	dx	; 04B1
+	call	l0108	; 04B2
+	jnz	l04ba	; 04B5
+	call	l03af	; 04B7
+
+l04ba:	; branch target
+	jnz	l04bf	; 04BA
+	jmp	l055a	; 04BC
+
+l04bf:	; branch target
+	mov	al,.08cdh	; 04BF
+	mov	cl,03h	; 04C2
+	ror	al,cl	; 04C4
+	mov	cl,al	; 04C6
+	mov	al,0ah	; 04C8
+	call	l042f	; 04CA
+	rcl	al,1	; 04CD
+	jnc	l04df	; 04CF
+	test	byte ptr .09b5h,0ffh	; 04D1
+	jnz	l04ed	; 04D6
+	mov	byte ptr .09b4h,01h	; 04D8
+	jmps	l054f	; 04DD
+
+l04df:	; branch target
+	test	byte ptr .09b5h,0ffh	; 04DF
+	jz	l04ed	; 04E4
+	mov	byte ptr .09b4h,01h	; 04E6
+	jmps	l054f	; 04EB
+
+l04ed:	; branch target
+	pop	dx	; 04ED
+	mov	al,dl	; 04EE
+	inc	dl	; 04F0
+	push	dx	; 04F2
+	nop	; 04F3
+	nop	; 04F4
+	nop	; 04F5
+	and	al,03h	; 04F6
+	push	ax	; 04F8
+	jnz	l050f	; 04F9
+	call	l00a6	; 04FB
+	push	cx	; 04FE
+	call	l01f5	; 04FF
+	pop	cx	; 0502
+	add	al,41h	; 0503
+	call	l00a0	; 0505
+	mov	al,3ah	; 0508
+	call	l00a0	; 050A
+	jmps	l0517	; 050D
+
+l050f:	; branch target
+	call	l009e	; 050F
+	mov	al,3ah	; 0512
+	call	l00a0	; 0514
+
+l0517:	; branch target
+	call	l009e	; 0517
+	mov	ch,01h	; 051A
+
+l051c:	; branch target
+	mov	al,ch	; 051C
+	call	l042f	; 051E
+	and	al,7fh	; 0521
+	cmp	al,20h	; 0523
+	jnz	l053a	; 0525
+	pop	ax	; 0527
+	push	ax	; 0528
+	cmp	al,03h	; 0529
+	jnz	l0538	; 052B
+	mov	al,09h	; 052D
+	call	l042f	; 052F
+	and	al,7fh	; 0532
+	cmp	al,20h	; 0534
+	jz	l054e	; 0536
+
+l0538:	; branch target
+	mov	al,20h	; 0538
+
+l053a:	; branch target
+	call	l00a0	; 053A
+	inc	ch	; 053D
+	cmp	ch,0ch	; 053F
+	jnc	l054e	; 0542
+	cmp	ch,09h	; 0544
+	jnz	l051c	; 0547
+	call	l009e	; 0549
+	jmps	l051c	; 054C
+
+l054e:	; branch target
+	pop	ax	; 054E
+
+l054f:	; branch target
+	call	l01e3	; 054F
+	jnz	l055a	; 0552
+	call	l0104	; 0554
+	jmp	l04ba	; 0557
+
+l055a:	; branch target
+	pop	dx	; 055A
+	ret	; 055B
+	call	l0276	; 055C
+	cmp	byte ptr .0828h,20h	; 055F
+	jz	l05c7	; 0564
+	call	l043b	; 0566
+	mov	dx,0827h	; 0569
+	call	l010d	; 056C
+	inc	al	; 056F
+	jnz	l0576	; 0571
+
+l0573:	; branch target
+	call	l03af	; 0573
+
+l0576:	; branch target
+	jmps	l05be	; 0576
+	call	l0276	; 0578
+	jnz	l05c7	; 057B
+	cmp	byte ptr .0828h,20h	; 057D
+	jz	l05c7	; 0582
+	call	l043b	; 0584
+	call	l00e0	; 0587
+	jz	l0573	; 058A
+	call	l00a6	; 058C
+	mov	bx,0ffh	; 058F
+
+l0592:	; branch target
+	cmp	bx,80h	; 0592
+	jc	l05a2	; 0596
+	push	bx	; 0598
+	call	l0111	; 0599
+	pop	bx	; 059C
+	jnz	l05ba	; 059D
+	mov	bx,00h	; 059F
+
+l05a2:	; branch target
+	inc	bx	; 05A2
+	mov	si,084ah	; 05A3
+	add	si,bx	; 05A6
+	mov	al,[si]	; 05A8
+	cmp	al,1ah	; 05AA
+	jz	l05be	; 05AC
+	push	bx	; 05AE
+	call	l0098	; 05AF
+	call	l01e3	; 05B2
+	pop	bx	; 05B5
+	jnz	l05be	; 05B6
+	jmps	l0592	; 05B8
+
+l05ba:	; branch target
+	dec	al	; 05BA
+	jnz	l05c1	; 05BC
+
+l05be:	; branch target
+	jmp	l0739	; 05BE
+
+l05c1:	; branch target
+	call	l03aa	; 05C1
+	call	l045b	; 05C4
+
+l05c7:	; branch target
+	jmp	l03b5	; 05C7
+	call	l0276	; 05CA
+	jnz	l05c7	; 05CD
+	mov	al,.093ah	; 05CF
+	push	ax	; 05D2
+	call	l043b	; 05D3
+	call	l0108	; 05D6
+	jz	l05dd	; 05D9
+	jmps	l0632	; 05DB
+
+l05dd:	; branch target
+	mov	si,0827h	; 05DD
+	mov	di,0837h	; 05E0
+	mov	cx,10h	; 05E3
+	call	l042b	; 05E6
+	mov	si,.0935h	; 05E9
+	call	l0242	; 05ED
+	cmp	al,3dh	; 05F0
+	jz	l05f8	; 05F2
+	cmp	al,5fh	; 05F4
+	jnz	l062d	; 05F6
+
+l05f8:	; branch target
+	inc	si	; 05F8
+	mov	.0935h,si	; 05F9
+	call	l0276	; 05FD
+	jnz	l062d	; 0600
+	pop	ax	; 0602
+	mov	ch,al	; 0603
+	mov	bx,093ah	; 0605
+	mov	al,[bx]	; 0608
+	or	al,al	; 060A
+	jz	l0614	; 060C
+	cmp	al,ch	; 060E
+	mov	[bx],ch	; 0610
+	jnz	l062d	; 0612
+
+l0614:	; branch target
+	mov	[bx],ch	; 0614
+	mov	byte ptr .0827h,00h	; 0616
+	call	l0108	; 061B
+	jz	l0628	; 061E
+	mov	dx,0827h	; 0620
+	call	l0144	; 0623
+
+l0626:	; branch target
+	jmps	l05be	; 0626
+
+l0628:	; branch target
+	call	l03af	; 0628
+	jmps	l0626	; 062B
+
+l062d:	; branch target
+	call	l045b	; 062D
+	jmps	l063a	; 0630
+
+l0632:	; branch target
+	mov	cx,0967h	; 0632
+	call	l00af	; 0635
+	jmps	l0626	; 0638
+
+l063a:	; branch target
+	jmp	l03b5	; 063A
+
+l063d:	; branch target
+	mov	cx,0973h	; 063D
+	call	l00af	; 0640
+	jmps	l0626	; 0643
+
+l0645:	; branch target
+	cmp	byte ptr .0828h,20h	; 0645
+	jnz	l066b	; 064A
+	mov	al,.093ah	; 064C
+	or	al,al	; 064F
+	jz	l0668	; 0651
+	dec	al	; 0653
+	mov	.0939h,al	; 0655
+	mov	.0931h,ax	; 0658
+	call	l00ca	; 065B
+	or	bx,bx	; 065E
+	jz	l063a	; 0660
+	mov	al,.0939h	; 0662
+	call	l00da	; 0665
+
+l0668:	; branch target
+	jmp	l073c	; 0668
+
+l066b:	; branch target
+	cmp	byte ptr .0830h,20h	; 066B
+	jz	l0674	; 0670
+	jmps	l063a	; 0672
+
+l0674:	; branch target
+	call	l043b	; 0674
+	mov	di,0830h	; 0677
+	mov	si,0800h	; 067A
+	mov	cx,03h	; 067D
+	rep	movsb	; 0680
+	mov	dx,0827h	; 0682
+	call	l00e0	; 0685
+	jnz	l0690	; 0688
+	call	l045b	; 068A
+	jmp	l03b5	; 068D
+
+l0690:	; branch target
+	call	l00c3	; 0690
+	inc	ax	; 0693
+	jz	l063d	; 0694
+	mov	.0803h,bx	; 0696
+	mov	es,bx	; 069A
+	call	l045b	; 069C
+	mov	ax,ds	; 069F
+	mov	es,ax	; 06A1
+	call	l0276	; 06A3
+	mov	bx,093ah	; 06A6
+	push	bx	; 06A9
+	mov	al,[bx]	; 06AA
+	mov	.0827h,al	; 06AC
+	mov	ax,10h	; 06AF
+	call	l0279	; 06B2
+	pop	bx	; 06B5
+	mov	al,[bx]	; 06B6
+	mov	.0837h,al	; 06B8
+	mov	byte ptr .0847h,00h	; 06BB
+	mov	di,5ch	; 06C0
+	mov	es,word ptr .0803h	; 06C3
+	mov	si,0827h	; 06C7
+	mov	cx,21h	; 06CA
+	call	l042b	; 06CD
+	mov	si,0bh	; 06D0
+	call	l0242	; 06D3
+	or	al,al	; 06D6
+	jz	l06e8	; 06D8
+
+l06da:	; branch target
+	lodsb	; 06DA
+	or	al,al	; 06DB
+	jz	l06e8	; 06DD
+	cmp	al,20h	; 06DF
+	jz	l06e5	; 06E1
+	jmps	l06da	; 06E3
+
+l06e5:	; branch target
+	call	l0242	; 06E5
+
+l06e8:	; branch target
+	mov	ch,00h	; 06E8
+	mov	di,81h	; 06EA
+	dec	si	; 06ED
+
+l06ee:	; branch target
+	lodsb	; 06EE
+	stosb	; 06EF
+	or	al,al	; 06F0
+	jz	l06f8	; 06F2
+	inc	ch	; 06F4
+	jmps	l06ee	; 06F6
+
+l06f8:	; branch target
+	mov	al,ch	; 06F8
+	mov	di,80h	; 06FA
+	stosb	; 06FD
+	mov	di,00h	; 06FE
+	mov	ax,es:03h[di]	; 0701
+	mov	cs:.0753h,ax	; 0705
+	mov	al,es:05h[di]	; 0709
+	mov	cs:.0752h,al	; 070D
+	call	l00a6	; 0711
+	call	l01fd	; 0714
+	mov	byte ptr .08cfh,00h	; 0717
+	mov	es,word ptr .0803h	; 071C
+	mov	ds,word ptr .0803h	; 0720
+	mov	bx,0fh	; 0724
+	cmp	word ptr [bx],00h	; 0727
+	jz	l072e	; 072A
+	mov	es,word ptr [bx]	; 072C
+
+l072e:	; branch target
+	callf	cs:dword ptr .0751h	; 072E
+	mov	sp,0930h	; 0733
+	jmp	l0092	; 0736
+
+l0739:	; branch target
+	call	l045b	; 0739
+
+l073c:	; branch target
+	call	l0276	; 073C
+	mov	al,.0828h	; 073F
+	sub	al,20h	; 0742
+	mov	bx,093ah	; 0744
+	or	al,[bx]	; 0747
+	jnz	l074e	; 0749
+	jmp	command_start	; 074B
+
+l074e:	; branch target
+	jmp	l03b5	; 074E
+
+ccp_workspace:	; ccp_workspace
+	db	000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h	; 0751 ................
+	db	000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h	; 0761 ................
+	db	000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h	; 0771 ................
+	db	000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h	; 0781 ................
+	db	000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h	; 0791 ................
+	db	000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h	; 07A1 ................
+	db	000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h	; 07B1 ................
+	db	000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h	; 07C1 ................
+	db	000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h	; 07D1 ................
+	db	000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h	; 07E1 ................
+	db	000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h	; 07F1 ...............
+
+transient_extension:	; transient_extension
+	db	053h,054h,04dh,000h,000h,000h,000h,024h,024h,024h,020h,020h,020h,020h,020h,053h	; 0800 STM....$$$     S
+	db	055h,042h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h	; 0810 UB..............
+	db	000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h	; 0820 ................
+	db	000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h	; 0830 ................
+	db	000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h	; 0840 ................
+	db	000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h	; 0850 ................
+	db	000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h	; 0860 ................
+	db	000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h	; 0870 ................
+	db	000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h	; 0880 ................
+	db	000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h	; 0890 ................
+	db	000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h	; 08A0 ................
+	db	000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h	; 08B0 ................
+	db	000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h	; 08C0 ................
+	db	000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h	; 08D0 ................
+	db	000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h	; 08E0 ................
+	db	000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h	; 08F0 ................
+	db	000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h	; 0900 ................
+	db	000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h	; 0910 ................
+	db	000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h	; 0920 ................
+	db	009h,000h,000h,001h,000h,00bh,000h,000h,000h,000h,000h,020h,03dh,05fh,02eh,03ah	; 0930 ........... =_.:
+	db	03bh,03ch,03eh,02ch,052h,045h,04eh,020h,054h,059h,050h,045h,045h,052h,041h,020h	; 0940 ;<>,REN TYPEERA 
+	db	044h,049h,052h,020h,04eh,04fh,020h,046h,049h,04ch,045h,000h,041h,04ch,04ch,020h	; 0950 DIR NO FILE.ALL 
+	db	028h,059h,02fh,04eh,029h,03fh,000h,046h,049h,04ch,045h,020h,045h,058h,049h,053h	; 0960 (Y/N)?.FILE EXIS
+	db	054h,053h,000h,04dh,045h,04dh,04fh,052h,059h,020h,04eh,04fh,054h,020h,041h,056h	; 0970 TS.MEMORY NOT AV
+	db	041h,049h,04ch,041h,042h,04ch,045h,000h,052h,045h,041h,044h,020h,045h,052h,052h	; 0980 AILABLE.READ ERR
+	db	04fh,052h,000h,00dh,00ah,043h,041h,04eh,04eh,04fh,054h,020h,043h,04ch,04fh,053h	; 0990 OR...CANNOT CLOS
+	db	045h,000h,000h,000h,000h,000h,000h,000h,000h,000h,072h,004h,05ch,005h,078h,005h	; 09A0 E.........r.\.x.
+	db	0cah,005h,045h,006h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,0c6h,009h	; 09B0 ..E.............
+	db	0d1h,009h,0dbh,009h,0e4h,009h,042h,061h,064h,020h,053h,065h,063h,074h,06fh,072h	; 09C0 ......Bad Sector
+	db	000h,052h,02fh,04fh,020h,064h,072h,069h,076h,065h,000h,052h,02fh,04fh,020h,066h	; 09D0 .R/O drive.R/O f
+	db	069h,06ch,065h,000h,053h,065h,06ch,065h,063h,074h,020h,065h,072h,072h,06fh,072h	; 09E0 ile.Select error
+	db	000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h	; 09F0 ................
+	org	00a00h
+l0a00:
+	org	00a23h
+l0a23:
+	org	00a32h
+l0a32:
+	org	00a4eh
+l0a4e:
+	org	00a4fh
+l0a4f:
+	org	00a61h
+l0a61:
+	org	00a69h
+l0a69:
+	org	00a80h
+bdos_dispatch:
+	org	00b06h
+bdos_entry:
+	org	00b19h
+l0b19:
+	org	00b1eh
+l0b1e:
+	org	00b3ah
+l0b3a:
+	org	00b4dh
+l0b4d:
+	org	00b75h
+l0b75:
+	org	00b9ah
+l0b9a:
+	org	00baeh
+l0bae:
+	org	00bd9h
+l0bd9:
+	org	00bedh
+l0bed:
+	org	00bf2h
+l0bf2:
+	org	00c1ah
+l0c1a:
+	org	00c1fh
+l0c1f:
+	org	00c22h
+l0c22:
+	org	00c27h
+l0c27:
+	org	00c46h
+l0c46:
+	org	00c58h
+l0c58:
+	org	00c61h
+l0c61:
+	org	00c75h
+l0c75:
+	org	00c78h
+l0c78:
+	org	00c87h
+l0c87:
+	org	00c96h
+l0c96:
+	org	00caeh
+l0cae:
+	org	00cdah
+l0cda:
+	org	00cedh
+l0ced:
+	org	00cefh
+l0cef:
+	org	00cf2h
+l0cf2:
+	org	00d24h
+l0d24:
+	org	00d39h
+l0d39:
+	org	00d3bh
+l0d3b:
+	org	00d41h
+l0d41:
+	org	00d4ah
+l0d4a:
+	org	00d4dh
+l0d4d:
+	org	00d50h
+l0d50:
+	org	00d62h
+l0d62:
+	org	00d91h
+l0d91:
+	org	00d94h
+l0d94:
+	org	00d9bh
+l0d9b:
+	org	00da7h
+l0da7:
+	org	00db1h
+l0db1:
+	org	00db5h
+l0db5:
+	org	00dd1h
+l0dd1:
+	org	00dd7h
+l0dd7:
+	org	00de4h
+l0de4:
+	org	00df5h
+l0df5:
+	org	00df8h
+l0df8:
+	org	00dfdh
+l0dfd:
+	org	00dfeh
+l0dfe:
+	org	00e11h
+l0e11:
+	org	00e15h
+l0e15:
+	org	00e29h
+l0e29:
+	org	00e5bh
+l0e5b:
+	org	00e5eh
+l0e5e:
+	org	00e79h
+l0e79:
+	org	00e8ah
+l0e8a:
+	org	00e8eh
+copy_paragraph:
+	org	00e9eh
+copy_word:
+	org	00eb0h
+l0eb0:
+	org	00eb3h
+l0eb3:
+	org	00ed8h
+l0ed8:
+	org	00edeh
+l0ede:
+	org	00ee9h
+l0ee9:
+	org	00efch
+l0efc:
+	org	00f19h
+l0f19:
+	org	00f23h
+l0f23:
+	org	00f3bh
+l0f3b:
+	org	00f45h
+l0f45:
+	org	00f51h
+l0f51:
+	org	00f5fh
+l0f5f:
+	org	00fa3h
+l0fa3:
+	org	00fcfh
+l0fcf:
+	org	00fdch
+l0fdc:
+	org	00fe7h
+l0fe7:
+	org	01006h
+l1006:
+	org	0101fh
+l101f:
+	org	01035h
+l1035:
+	org	0103fh
+l103f:
+	org	01041h
+l1041:
+	org	01045h
+l1045:
+	org	01066h
+l1066:
+	org	01093h
+l1093:
+	org	01098h
+l1098:
+	org	010a7h
+l10a7:
+	org	010a9h
+l10a9:
+	org	010b8h
+l10b8:
+	org	010dch
+l10dc:
+	org	010e5h
+l10e5:
+	org	01104h
+l1104:
+	org	01109h
+l1109:
+	org	0110ch
+l110c:
+	org	01125h
+l1125:
+	org	01144h
+l1144:
+	org	01147h
+l1147:
+	org	0115dh
+l115d:
+	org	0115eh
+l115e:
+	org	01167h
+l1167:
+	org	0117dh
+l117d:
+	org	01180h
+l1180:
+	org	01192h
+l1192:
+	org	01199h
+l1199:
+	org	0119bh
+l119b:
+	org	011b8h
+l11b8:
+	org	011bch
+l11bc:
+	org	011c2h
+l11c2:
+	org	011dch
+l11dc:
+	org	011e8h
+l11e8:
+	org	011edh
+l11ed:
+	org	011f4h
+l11f4:
+	org	01215h
+l1215:
+	org	01221h
+l1221:
+	org	01226h
+l1226:
+	org	0122ch
+l122c:
+	org	0123dh
+l123d:
+	org	01259h
+l1259:
+	org	01263h
+l1263:
+	org	01275h
+l1275:
+	org	01295h
+l1295:
+	org	0129fh
+l129f:
+	org	012b0h
+l12b0:
+	org	012c7h
+l12c7:
+	org	012ceh
+l12ce:
+	org	012dbh
+l12db:
+	org	012ech
+l12ec:
+	org	012feh
+l12fe:
+	org	01300h
+l1300:
+	org	01306h
+l1306:
+	org	01313h
+l1313:
+	org	01330h
+l1330:
+	org	01335h
+l1335:
+	org	01339h
+l1339:
+	org	0133bh
+l133b:
+	org	01344h
+l1344:
+	org	0134fh
+l134f:
+	org	01366h
+l1366:
+	org	01368h
+l1368:
+	org	0136fh
+l136f:
+	org	0137ah
+l137a:
+	org	01391h
+l1391:
+	org	01393h
+l1393:
+	org	0139ah
+l139a:
+	org	013a9h
+l13a9:
+	org	013b9h
+l13b9:
+	org	013cbh
+l13cb:
+	org	013cch
+l13cc:
+	org	013ebh
+l13eb:
+	org	01402h
+l1402:
+	org	01410h
+l1410:
+	org	01413h
+l1413:
+	org	01416h
+l1416:
+	org	01419h
+l1419:
+	org	0141ch
+l141c:
+	org	01438h
+l1438:
+	org	01439h
+l1439:
+	org	01458h
+l1458:
+	org	01459h
+l1459:
+	org	01461h
+l1461:
+	org	01472h
+l1472:
+	org	01477h
+l1477:
+	org	01483h
+l1483:
+	org	01484h
+l1484:
+	org	0148ch
+l148c:
+	org	01491h
+l1491:
+	org	01499h
+l1499:
+	org	014a9h
+l14a9:
+	org	014b3h
+l14b3:
+	org	014c8h
+l14c8:
+	org	014d9h
+l14d9:
+	org	014dbh
+l14db:
+	org	014e4h
+l14e4:
+	org	014e7h
+l14e7:
+	org	014fdh
+l14fd:
+	org	0150dh
+l150d:
+	org	0151bh
+l151b:
+	org	0151dh
+l151d:
+	org	01527h
+l1527:
+	org	0152ch
+l152c:
+	org	0153fh
+l153f:
+	org	0154ah
+l154a:
+	org	0154eh
+l154e:
+	org	01556h
+l1556:
+	org	01569h
+l1569:
+	org	01578h
+l1578:
+	org	01581h
+l1581:
+	org	01583h
+l1583:
+	org	01589h
+l1589:
+	org	015a6h
+l15a6:
+	org	015adh
+l15ad:
+	org	015d3h
+l15d3:
+	org	015ddh
+l15dd:
+	org	01603h
+l1603:
+	org	01607h
+l1607:
+	org	0160bh
+l160b:
+	org	01610h
+l1610:
+	org	01615h
+l1615:
+	org	0161ah
+l161a:
+	org	0161dh
+l161d:
+	org	01625h
+l1625:
+	org	01628h
+l1628:
+	org	0162ah
+l162a:
+	org	01636h
+l1636:
+	org	0168eh
+l168e:
+	org	01692h
+l1692:
+	org	01693h
+l1693:
+	org	0169fh
+l169f:
+	org	016a8h
+l16a8:
+	org	016ach
+l16ac:
+	org	016afh
+l16af:
+	org	016b9h
+l16b9:
+	org	016c9h
+l16c9:
+	org	016f0h
+l16f0:
+	org	01708h
+l1708:
+	org	0171dh
+l171d:
+	org	01722h
+l1722:
+	org	01731h
+l1731:
+	org	01738h
+l1738:
+	org	01754h
+l1754:
+	org	0175eh
+l175e:
+	org	0176bh
+l176b:
+	org	01786h
+l1786:
+	org	01792h
+l1792:
+	org	017a0h
+l17a0:
+	org	017a9h
+l17a9:
+	org	017afh
+l17af:
+	org	017bdh
+l17bd:
+	org	017c9h
+l17c9:
+	org	017e0h
+l17e0:
+	org	017e3h
+l17e3:
+	org	017f3h
+l17f3:
+	org	017fbh
+l17fb:
+	org	017feh
+l17fe:
+	org	01809h
+l1809:
+	org	0180ah
+l180a:
+	org	01814h
+l1814:
+	org	0181bh
+l181b:
+	org	01823h
+l1823:
+	org	0182dh
+l182d:
+	org	0182eh
+l182e:
+	org	01837h
+l1837:
+	org	0183eh
+l183e:
+	org	01840h
+l1840:
+	org	0186bh
+l186b:
+	org	0186dh
+l186d:
+	org	0186eh
+l186e:
+	org	0187bh
+l187b:
+	org	01881h
+l1881:
+	org	0188dh
+l188d:
+	org	01895h
+l1895:
+	org	0189ah
+l189a:
+	org	018aeh
+l18ae:
+	org	018bah
+l18ba:
+	org	018bbh
+l18bb:
+	org	018c3h
+l18c3:
+	org	018d7h
+l18d7:
+	org	018f4h
+l18f4:
+	org	0190fh
+l190f:
+	org	01910h
+l1910:
+	org	01919h
+l1919:
+	org	01922h
+l1922:
+	org	0192bh
+l192b:
+	org	01931h
+l1931:
+	org	01941h
+l1941:
+	org	01948h
+l1948:
+	org	01957h
+l1957:
+	org	0195ch
+l195c:
+	org	0196bh
+l196b:
+	org	01989h
+l1989:
+	org	019aeh
+l19ae:
+	org	019b8h
+l19b8:
+	org	019beh
+l19be:
+	org	019ceh
+l19ce:
+	org	019cfh
+l19cf:
+	org	019e1h
+l19e1:
+	org	019eah
+l19ea:
+	org	019f9h
+l19f9:
+	org	019fch
+l19fc:
+	org	01a0eh
+l1a0e:
+	org	01a17h
+l1a17:
+	org	01a34h
+l1a34:
+	org	01a4bh
+l1a4b:
+	org	01a53h
+l1a53:
+	org	01a64h
+l1a64:
+	org	01a65h
+l1a65:
+	org	01a7ch
+l1a7c:
+	org	01a88h
+l1a88:
+	org	01a99h
+l1a99:
+	org	01a9ch
+l1a9c:
+	org	01aa4h
+l1aa4:
+	org	01abfh
+l1abf:
+	org	01ac1h
+l1ac1:
+	org	01ad1h
+l1ad1:
+	org	01ae7h
+l1ae7:
+	org	01af1h
+l1af1:
+	org	01af9h
+l1af9:
+	org	01afdh
+l1afd:
+	org	01b0dh
+l1b0d:
+	org	01b13h
+l1b13:
+	org	01b26h
+l1b26:
+	org	01b2bh
+l1b2b:
+	org	01b2ch
+l1b2c:
+	org	01b3bh
+l1b3b:
+	org	01b40h
+l1b40:
+	org	01b51h
+l1b51:
+	org	01b59h
+l1b59:
+	org	01b5bh
+l1b5b:
+	org	01b91h
+l1b91:
+	org	01b9ch
+l1b9c:
+	org	01b9dh
+l1b9d:
+	org	01ba7h
+l1ba7:
+	org	01ba8h
+l1ba8:
+	org	01bd8h
+l1bd8:
+	org	01beah
+l1bea:
+	org	01bf4h
+l1bf4:
+	org	01bfah
+l1bfa:
+	org	01c10h
+l1c10:
+	org	01c37h
+l1c37:
+	org	01c3fh
+l1c3f:
+	org	01c43h
+l1c43:
+	org	01c44h
+l1c44:
+	org	01c6ch
+l1c6c:
+	org	01c83h
+l1c83:
+	org	01cb0h
+l1cb0:
+	org	01cbbh
+l1cbb:
+	org	01cd6h
+l1cd6:
+	org	01cd9h
+l1cd9:
+	org	01ce1h
+l1ce1:
+	org	01ce7h
+l1ce7:
+	org	01cech
+l1cec:
+	org	01d15h
+l1d15:
+	org	01d29h
+l1d29:
+	org	01d2ch
+l1d2c:
+	org	01d31h
+l1d31:
+	org	01d4dh
+l1d4d:
+	org	01d6bh
+l1d6b:
+	org	01d77h
+l1d77:
+	org	01d96h
+l1d96:
+	org	01d9dh
+l1d9d:
+	org	01d9fh
+l1d9f:
+	org	01da7h
+l1da7:
+	org	01dd3h
+l1dd3:
+	org	01dfah
+l1dfa:
+	org	01e10h
+l1e10:
+	org	01e38h
+l1e38:
+	org	01e3bh
+l1e3b:
+	org	01e3eh
+l1e3e:
+	org	01e43h
+l1e43:
+	org	01e96h
+l1e96:
+	org	01ed2h
+l1ed2:
+	org	01ed8h
+l1ed8:
+	org	01ee0h
+l1ee0:
+	org	01ee9h
+l1ee9:
+	org	01ef3h
+l1ef3:
+	org	01ef4h
+l1ef4:
+	org	01efeh
+l1efe:
+	org	01effh
+l1eff:
+	org	01f2fh
+l1f2f:
+	org	01f46h
+l1f46:
+	org	01f68h
+l1f68:
+	org	01f6dh
+l1f6d:
+	org	01f6fh
+l1f6f:
+	org	01f84h
+l1f84:
+	org	01f9ah
+l1f9a:
+	org	01fach
+l1fac:
+	org	01fb4h
+l1fb4:
+	org	01fb9h
+l1fb9:
+	org	01fbch
+l1fbc:
+	org	01fd4h
+l1fd4:
+	org	01ffch
+l1ffc:
+	org	02005h
+l2005:
+	org	02006h
+l2006:
+	org	02014h
+l2014:
+	org	02015h
+l2015:
+	org	02021h
+l2021:
+	org	0204eh
+l204e:
+	org	0205bh
+l205b:
+	org	0205ch
+l205c:
+	org	02090h
+l2090:
+	org	020afh
+l20af:
+	org	020d7h
+l20d7:
+	org	020dch
+l20dc:
+	org	020f7h
+l20f7:
+	org	0212dh
+l212d:
+	org	02150h
+l2150:
+	org	02161h
+l2161:
+	org	021aeh
+l21ae:
+	org	021c3h
+l21c3:
+	org	021cdh
+l21cd:
+	org	021d7h
+l21d7:
+	org	021d9h
+l21d9:
+	org	021ech
+bdos_workspace:
+	org	0220ch
+cmd_descriptors:
+	org	02500h
+bios_vectors:
+	org	02515h
+l2515:
+	org	02518h
+l2518:
+	org	0251bh
+l251b:
+	org	0251eh
+l251e:
+	org	02521h
+l2521:
+	org	02524h
+l2524:
+	org	02527h
+l2527:
+	org	0252ah
+l252a:
+	org	02530h
+l2530:
+	org	02533h
+l2533:
+	org	02536h
+l2536:
+	org	02539h
+l2539:
+	org	0253ch
+l253c:
+	org	0257eh
+warm_boot:
+	org	0258bh
+console_input:
+	org	02590h
+console_output:
+	org	02595h
+console_status:
+	org	0259ch
+reader_input:
+	org	025a1h
+punch_output:
+	org	025a6h
+list_output:
+	org	025abh
+list_status:
+	org	025b2h
+l25b2:
+	org	025bbh
+l25bb:
+	org	025c1h
+l25c1:
+	org	025c8h
+l25c8:
+	org	025ceh
+l25ce:
+	org	025dch
+l25dc:
+	org	025e3h
+l25e3:
+	org	025eah
+l25ea:
+	org	025f7h
+l25f7:
+	org	0260dh
+l260d:
+	org	0260fh
+l260f:
+	org	02610h
+l2610:
+	org	02611h
+l2611:
+	org	0261eh
+l261e:
+	org	02620h
+l2620:
+	org	0263dh
+l263d:
+	org	02643h
+l2643:
+	org	0265dh
+l265d:
+	org	02667h
+l2667:
+	org	0267fh
+l267f:
+	org	0269fh
+l269f:
+	org	026aeh
+l26ae:
+	org	026b0h
+l26b0:
+	org	026bch
+l26bc:
+	org	026d3h
+l26d3:
+	org	026d9h
+l26d9:
+	org	026dfh
+l26df:
+	org	026feh
+l26fe:
+	org	02707h
+l2707:
+	org	02709h
+l2709:
+	org	0270ch
+l270c:
+	org	0271ch
+l271c:
+	org	02758h
+l2758:
+	org	0275fh
+l275f:
+	org	02771h
+l2771:
+	org	0277dh
+l277d:
+	org	02794h
+l2794:
+	org	027a4h
+l27a4:
+	org	027b9h
+l27b9:
+	org	027c1h
+l27c1:
+	org	027cfh
+l27cf:
+	org	027d7h
+l27d7:
+	org	027e0h
+l27e0:
+	org	0280ch
+l280c:
+	org	0282dh
+l282d:
+	org	0287dh
+l287d:
+	org	028a1h
+l28a1:
+	org	028c7h
+l28c7:
+	org	028d1h
+l28d1:
+	org	028d5h
+l28d5:
+	org	028dah
+l28da:
+	org	028e0h
+l28e0:
+	org	02915h
+l2915:
+	org	02979h
+l2979:
+	org	02992h
+l2992:
+	org	029ach
+l29ac:
+	org	029b3h
+l29b3:
+	org	029ceh
+l29ce:
+	org	029d2h
+l29d2:
+	org	029f0h
+l29f0:
+	org	029f2h
+l29f2:
+	org	02a11h
+l2a11:
+	org	02a14h
+select_disk:
+	org	02a1ch
+disk_read:
+	org	02a21h
+disk_write:
+	org	02a26h
+disk_home:
+	org	02a2fh
+l2a2f:
+	org	02a7ah
+l2a7a:
+	org	02a80h
+set_track:
+	org	02a85h
+set_sector:
+	org	02a8ah
+translate_sector:
+	org	02a8dh
+set_dma:
+	org	02a92h
+set_dma_segment:
+	org	02a97h
+get_memory_regions:
+	org	02a9bh
+get_iobyte:
+	org	02a9eh
+set_iobyte:
+	org	02aa9h
+l2aa9:
+	org	02aadh
+l2aad:
+	org	02ae0h
+l2ae0:
+	org	02ae4h
+l2ae4:
+	org	02af5h
+l2af5:
+	org	02b07h
+l2b07:
+	org	02b18h
+l2b18:
+	org	02b23h
+l2b23:
+	org	02b3ah
+l2b3a:
+	org	02b46h
+l2b46:
+	org	02b5eh
+l2b5e:
+	org	02b5fh
+l2b5f:
+	org	02b7bh
+l2b7b:
+	org	02bach
+l2bac:
+	org	02bafh
+l2baf:
+	org	02bb5h
+l2bb5:
+	org	02bbah
+l2bba:
+	org	02bdch
+l2bdc:
+	org	02be6h
+l2be6:
+	org	02be8h
+l2be8:
+	org	02bebh
+l2beb:
+	org	02bf0h
+l2bf0:
+	org	02c11h
+l2c11:
+	org	02c13h
+l2c13:
+	org	02c16h
+l2c16:
+	org	02c2bh
+l2c2b:
+	org	02c40h
+l2c40:
+	org	02c45h
+l2c45:
+	org	02c5dh
+l2c5d:
+	org	02c63h
+l2c63:
+	org	02c90h
+l2c90:
+	org	02c9ah
+l2c9a:
+	org	02ca5h
+l2ca5:
+	org	02cafh
+l2caf:
+	org	02cc7h
+l2cc7:
+	org	02ccah
+l2cca:
+	org	02cd6h
+l2cd6:
+	org	02cdah
+l2cda:
+	org	02cdbh
+l2cdb:
+	org	02ce5h
+l2ce5:
+	org	02d37h
+l2d37:
+	org	02d7eh
+l2d7e:
+	org	02da2h
+l2da2:
+	org	02dcbh
+l2dcb:
+	org	02de4h
+l2de4:
+	org	02e0bh
+l2e0b:
+	org	02e17h
+l2e17:
+	org	02e1fh
+l2e1f:
+	org	02e3ah
+l2e3a:
+	org	02e3dh
+l2e3d:
+	org	02e74h
+l2e74:
+	org	02e89h
+l2e89:
+	org	02e94h
+l2e94:
+	org	02e98h
+l2e98:
+	org	02eb0h
+l2eb0:
+	org	02eb8h
+l2eb8:
+	org	02ecdh
+l2ecd:
+	org	02ed4h
+l2ed4:
+	org	02edch
+l2edc:
+	org	02ee3h
+l2ee3:
+	org	02f2dh
+l2f2d:
+	org	02f50h
+l2f50:
+	org	02f58h
+l2f58:
+	org	02f5fh
+l2f5f:
+	org	02f68h
+l2f68:
+	org	02f72h
+l2f72:
+	org	02f86h
+l2f86:
+	org	02f8ch
+l2f8c:
+	org	02f99h
+l2f99:
+	org	02fadh
+l2fad:
+	org	02fc6h
+l2fc6:
+	org	02fdbh
+l2fdb:
+	org	02fdfh
+l2fdf:
+	org	02fe0h
+l2fe0:
+	org	02fe6h
+l2fe6:
+	org	02fedh
+l2fed:
+	org	0300bh
+l300b:
+	org	0300ch
+l300c:
+	org	0302bh
+l302b:
+	org	0303ah
+l303a:
+	org	03059h
+l3059:
+	org	03067h
+l3067:
+	org	03069h
+resident_data:
+	org	03757h
+cold_boot:
+	org	0378bh
+l378b:
+	org	037f6h
+l37f6:
+	org	037f7h
+l37f7:
+	org	03822h
+l3822:
+	org	03839h
+l3839:
+	org	03885h
+l3885:
+	org	03897h
+l3897:
+	org	038a1h
+l38a1:
+	org	038bah
+l38ba:
+	org	038e6h
+l38e6:
+	org	038fah
+l38fa:
+	org	0392ah
+l392a:
+	org	0393ch
+l393c:
+	org	0394eh
+l394e:
+	org	0394fh
+l394f:
+	org	0395bh
+l395b:
+	org	0398fh
+l398f:
+	org	03992h
+l3992:
+	org	039b0h
+l39b0:
+	org	039b2h
+l39b2:
+	org	039c0h
+l39c0:
+	org	039c1h
+l39c1:
+	org	039f4h
+l39f4:
+	org	039f5h
+l39f5:
+	org	03a01h
+l3a01:
+	org	03a13h
+l3a13:
+	org	03a17h
+l3a17:
+	org	03a41h
+l3a41:
+	org	03a42h
+l3a42:
+	org	03a4bh
+l3a4b:
+	org	03a58h
+l3a58:
+	org	03a59h
+l3a59:
+	org	03a65h
+l3a65:
+	org	03a84h
+l3a84:
+	org	03a91h
+l3a91:
+	org	03a9bh
+l3a9b:
+	org	03aa5h
+l3aa5:
+	org	03aa6h
+l3aa6:
+	org	03ac9h
+l3ac9:
+	org	03ad9h
+l3ad9:
+	org	03aefh
+l3aef:
+	org	03b29h
+l3b29:
+	org	03b54h
+l3b54:
+	org	03b61h
+l3b61:
+	org	03b62h
+l3b62:
+	org	03b71h
+l3b71:
+	org	03b72h
+l3b72:
+	org	03b76h
+l3b76:
+	org	03b7dh
+l3b7d:
+	org	03b7fh
+l3b7f:
+	org	03b88h
+l3b88:
+	org	03b99h
+l3b99:
+	org	03ba6h
+l3ba6:
+	org	03babh
+l3bab:
+	org	03bb3h
+l3bb3:
+	org	03bbah
+l3bba:
+	org	03bc4h
+startup_messages:
+	end

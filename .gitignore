@@ -1,0 +1,14 @@
+/rom
+*.h86
+*.lst
+*.sym
+/kernel/*.bin
+/kernel/*.dec
+/kernel/*.str
+/stm-basic.img
+/stm-basic.imd
+/msbasic.stm
+__pycache__/
+/rom/
+.DS_Store
+.*.swp

@@ -1,0 +1,7 @@
+; BASBOOT.A86 - BASIC wording for the existing 38-character boot error field.
+; This is a data overlay on the fully reconstructed boot sector; code is intact.
+	cseg
+	org	7c40h
+error_message:
+	db	'This is a SpeedStart BASIC data disk. '
+	end

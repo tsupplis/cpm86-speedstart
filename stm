@@ -1,0 +1,35 @@
+#!/bin/sh
+# Start SpeedStart BASIC on a private, retained floppy copy.
+set -eu
+project_dir=$(CDPATH= cd "$(dirname "$0")" && pwd)
+if [ "$#" -ne 0 ]; then
+    echo "Usage: $0" >&2
+    exit 2
+fi
+pce=${PCE:-pce-ibmpc}
+command -v "$pce" >/dev/null 2>&1 || {
+    echo "PCE not found: $pce" >&2
+    exit 1
+}
+# Prefer an explicit override, then local ROMs, then the installed macOS set.
+rom_dir=${PCE_ROM_DIR:-"$project_dir/rom"}
+if [ -z "${PCE_ROM_DIR:-}" ] && [ ! -d "$rom_dir" ]; then
+    rom_dir="$HOME/.local.darwin/emulators/share/pce/ibmpc"
+fi
+for rom in ibm-xt-1982-11-08.rom ibm-basic-1.10.rom ibmpc-pcex.rom; do
+    if [ ! -f "$rom_dir/$rom" ]; then
+        echo "Missing ROM: $rom_dir/$rom" >&2
+        echo "Set PCE_ROM_DIR to the PCE IBM PC ROM directory." >&2
+        exit 1
+    fi
+done
+rom_dir=$(CDPATH= cd "$rom_dir" && pwd)
+make -C "$project_dir" stm-basic.imd
+session_dir=$(mktemp -d "${TMPDIR:-/tmp}/speedstart-basic.XXXXXX")
+cp "$project_dir/stm.cfg" "$session_dir/stm.cfg"
+cp "$project_dir/stm-basic.imd" "$session_dir/disk.imd"
+ln -s "$rom_dir" "$session_dir/rom"
+echo "Starting SpeedStart BASIC"
+echo "Session disk and log retained in: $session_dir"
+cd "$session_dir"
+exec "$pce" -c stm.cfg -l pce.log -g cga -t sdl -r

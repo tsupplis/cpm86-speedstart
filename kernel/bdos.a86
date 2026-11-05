@@ -1,0 +1,4109 @@
+; BDOS - complete SpeedStart CP/M-86 disassembly.
+; CODE offsets 0A00h..2500h (end exclusive); loaded in segment 0051h.
+; Instructions recovered from the original kernel; data and padding are explicit.
+; Address comments refer to decoded CODE, excluding the 128-byte CMD header.
+; make check verifies the entire reassembled kernel against base/speed.str.
+	cseg
+	org	00a00h
+
+l0a00:	; branch target
+	mov	cs:byte ptr .2498h,01h	; 0A00
+	mov	ah,cs:.2327h	; 0A06
+	mov	al,cs:.2313h	; 0A0B
+	mov	cs:.2467h,ax	; 0A0F
+	int	0e0h	; 0A13
+	mov	ax,cs:.2467h	; 0A15
+	mov	cs:.2327h,ah	; 0A19
+	mov	cs:.2313h,al	; 0A1E
+	ret	; 0A22
+
+l0a23:	; branch target
+	mov	ax,.2323h	; 0A23
+	mov	.249dh,ax	; 0A26
+	mov	word ptr .249bh,0ffffh	; 0A29
+	jmp	l0f23	; 0A2F
+
+l0a32:	; branch target
+	cmp	byte ptr .24afh,00h	; 0A32
+	jz	l0a4f	; 0A37
+	cmp	byte ptr .2393h,01h	; 0A39
+	jng	l0a4e	; 0A3E
+	call	l1147	; 0A40
+	mov	bx,.2394h	; 0A43
+	call	l1045	; 0A47
+	dec	byte ptr .2393h	; 0A4A
+
+l0a4e:	; branch target
+	ret	; 0A4E
+
+l0a4f:	; branch target
+	jmp	l10b8	; 0A4F
+	push	ds	; 0A52
+	mov	cx,80h	; 0A53
+	mov	di,0bh	; 0A56
+	mov	si,.24a0h	; 0A59
+	mov	ds,word ptr .24a2h	; 0A5D
+
+l0a61:	; branch target
+	lodsb	; 0A61
+	stosb	; 0A62
+	or	al,al	; 0A63
+	jz	l0a69	; 0A65
+	loop	l0a61	; 0A67
+
+l0a69:	; branch target
+	pop	ds	; 0A69
+	mov	al,80h	; 0A6A
+	sub	al,cl	; 0A6C
+	mov	.0ah,al	; 0A6E
+	jmp	l0f45	; 0A71
+	ret	; 0A74
+	db	000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h	; 0A75 ...........
+
+bdos_dispatch:	; bdos_dispatch
+	db	03eh,00fh,0bah,015h,072h,014h,0bfh,015h,012h,025h,00bh,016h,0c4h,015h,0e2h,015h	; 0A80 >...r....%......
+	db	0e7h,015h,0edh,015h,0f9h,015h,000h,016h,0ech,00ah,015h,020h,0ach,01fh,036h,020h	; 0A90 ........... ..6 
+	db	0b0h,020h,0b6h,020h,0e1h,020h,0fah,020h,003h,021h,00ch,021h,012h,021h,01bh,021h	; 0AA0 . . . . .!.!.!.!
+	db	024h,021h,02ah,021h,030h,021h,037h,021h,0c9h,017h,03dh,021h,043h,021h,04ch,021h	; 0AB0 $!*!0!7!..=!C!L!
+	db	055h,021h,067h,021h,070h,021h,076h,021h,07ch,021h,082h,021h,006h,016h,006h,016h	; 0AC0 U!g!p!v!|!.!....
+	db	0dah,021h,052h,00ah,074h,00ah,0f1h,00ah,06ah,00fh,08ah,00fh,094h,00fh,0c0h,00fh	; 0AD0 .!R.t...j.......
+	db	0e2h,00fh,008h,010h,01ah,010h,058h,010h,032h,00ah,02ah,00eh	; 0AE0 ......X.2.*.
+	mov	al,22h	; 0AEC
+	jmp	l1603	; 0AEE
+	mov	bx,24a0h	; 0AF1
+	jmp	l2150	; 0AF4
+	db	000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h	; 0AF7 ...............
+
+bdos_entry:	; bdos_entry
+	push	ds	; 0B06
+	mov	ax,cs	; 0B07
+	mov	ds,ax	; 0B09
+	pop	word ptr .249dh	; 0B0B
+	cmp	cl,05h	; 0B0F
+	jz	l0b19	; 0B12
+	cmp	cl,0dh	; 0B14
+	jc	l0b1e	; 0B17
+
+l0b19:	; branch target
+	mov	byte ptr .24b1h,0ffh	; 0B19
+
+l0b1e:	; branch target
+	mov	word ptr .2494h,ss	; 0B1E
+	mov	.2496h,sp	; 0B22
+	cmp	byte ptr .2498h,01h	; 0B26
+	jz	l0b3a	; 0B2B
+	mov	word ptr .2465h,00h	; 0B2D
+	mov	ax,cs	; 0B33
+	mov	ss,ax	; 0B35
+	mov	sp,2463h	; 0B37
+
+l0b3a:	; branch target
+	mov	bx,.2496h	; 0B3A
+	mov	es,word ptr .2494h	; 0B3E
+	mov	bx,es:04h[bx]	; 0B42
+	and	bx,0200h	; 0B46
+	jz	l0b4d	; 0B4A
+	sti	; 0B4C
+
+l0b4d:	; branch target
+	mov	ax,ds	; 0B4D
+	push	bp	; 0B4F
+	push	di	; 0B50
+	push	si	; 0B51
+	push	cs	; 0B52
+	pop	es	; 0B53
+	mov	word ptr .2325h,es	; 0B54
+	call	l0b75	; 0B58
+	pop	si	; 0B5B
+	pop	di	; 0B5C
+	pop	bp	; 0B5D
+	mov	es,word ptr .2325h	; 0B5E
+	cli	; 0B62
+	mov	ss,word ptr .2494h	; 0B63
+	mov	sp,.2496h	; 0B67
+	mov	byte ptr .24b1h,00h	; 0B6B
+	mov	ds,word ptr .249dh	; 0B70
+	iret	; 0B74
+
+l0b75:	; branch target
+	mov	.2499h,dx	; 0B75
+	mov	.2310h,dl	; 0B79
+	xor	ax,ax	; 0B7D
+	mov	.249bh,ax	; 0B7F
+	mov	.2327h,al	; 0B82
+	mov	.2315h,al	; 0B85
+	mov	.2313h,al	; 0B88
+	mov	bx,2198h	; 0B8B
+	push	bx	; 0B8E
+	cmp	byte ptr .2498h,01h	; 0B8F
+	jz	l0b9a	; 0B94
+	mov	.2463h,sp	; 0B96
+
+l0b9a:	; branch target
+	cmp	cl,29h	; 0B9A
+	jc	l0bae	; 0B9D
+	sub	cl,06h	; 0B9F
+	cmp	cl,36h	; 0BA2
+	jc	l0bae	; 0BA5
+	mov	word ptr .249bh,0ffffh	; 0BA7
+	ret	; 0BAD
+
+l0bae:	; branch target
+	mov	bl,cl	; 0BAE
+	mov	bh,00h	; 0BB0
+	mov	cl,dl	; 0BB2
+	add	bx,bx	; 0BB4
+	jmp	cs:word ptr 0a80h[bx]	; 0BB6
+	mov	word ptr .2465h,01ffh	; 0BBB
+	jmps	l0bd9	; 0BC1
+	mov	word ptr .2465h,04ffh	; 0BC3
+	jmps	l0bd9	; 0BC9
+	mov	word ptr .2465h,02ffh	; 0BCB
+	jmps	l0bd9	; 0BD1
+	mov	word ptr .2465h,03ffh	; 0BD3
+
+l0bd9:	; branch target
+	cmp	byte ptr .2498h,01h	; 0BD9
+	jnz	l0bed	; 0BDE
+	mov	ax,.2467h	; 0BE0
+	mov	.2327h,ah	; 0BE3
+	mov	.2313h,al	; 0BE7
+	call	l0f3b	; 0BEA
+
+l0bed:	; branch target
+	mov	sp,.2463h	; 0BED
+	ret	; 0BF1
+
+l0bf2:	; branch target
+	push	ds	; 0BF2
+	push	ax	; 0BF3
+	push	cx	; 0BF4
+	mov	byte ptr .2327h,0ffh	; 0BF5
+	mov	.2328h,cl	; 0BFA
+	xor	ch,ch	; 0BFE
+	mov	si,.2499h	; 0C00
+	mov	.24a9h,si	; 0C04
+	mov	di,239bh	; 0C08
+	mov	.2499h,di	; 0C0B
+	mov	ds,word ptr .249dh	; 0C0F
+	cld	; 0C13
+	rep	movsb	; 0C14
+	pop	cx	; 0C16
+	pop	ax	; 0C17
+	pop	ds	; 0C18
+	ret	; 0C19
+
+l0c1a:	; branch target
+	push	cx	; 0C1A
+	mov	cl,21h	; 0C1B
+	jmps	l0c22	; 0C1D
+
+l0c1f:	; branch target
+	push	cx	; 0C1F
+	mov	cl,24h	; 0C20
+
+l0c22:	; branch target
+	call	l0bf2	; 0C22
+	pop	cx	; 0C25
+	ret	; 0C26
+
+l0c27:	; branch target
+	push	es	; 0C27
+	push	ax	; 0C28
+	push	cx	; 0C29
+	mov	cl,.2328h	; 0C2A
+	xor	ch,ch	; 0C2E
+	mov	es,word ptr .249dh	; 0C30
+	mov	si,239bh	; 0C34
+	mov	di,.24a9h	; 0C37
+	mov	.2499h,di	; 0C3B
+	cld	; 0C3F
+	rep	movsb	; 0C40
+	pop	cx	; 0C42
+	pop	ax	; 0C43
+	pop	es	; 0C44
+	ret	; 0C45
+
+l0c46:	; branch target
+	mov	cl,14h	; 0C46
+	mov	dx,.22dch	; 0C48
+	mov	ds,word ptr .2323h	; 0C4C
+	call	l0a00	; 0C50
+	mov	ax,cs	; 0C53
+	mov	ds,ax	; 0C55
+	ret	; 0C57
+
+l0c58:	; branch target
+	push	bx	; 0C58
+	mov	dx,22d7h	; 0C59
+	call	l0a00	; 0C5C
+	pop	bx	; 0C5F
+	ret	; 0C60
+
+l0c61:	; branch target
+	push	ax	; 0C61
+	push	bx	; 0C62
+	mov	bx,07h[si]	; 0C63
+	sub	bx,05h[si]	; 0C66
+	mov	ax,07h[di]	; 0C69
+	sub	ax,05h[di]	; 0C6C
+	cmp	bx,ax	; 0C6F
+	jna	l0c75	; 0C71
+	xchg	si,di	; 0C73
+
+l0c75:	; branch target
+	pop	bx	; 0C75
+	pop	ax	; 0C76
+	ret	; 0C77
+
+l0c78:	; branch target
+	sub	bx,bx	; 0C78
+	sub	dx,dx	; 0C7A
+	mov	byte ptr .22e2h,0ffh	; 0C7C
+	mov	cx,08h	; 0C81
+	mov	si,220ch	; 0C84
+
+l0c87:	; branch target
+	cmp	byte ptr [si],00h	; 0C87
+	jz	l0cf2	; 0C8A
+	cmp	byte ptr [si],02h	; 0C8C
+	jnz	l0c96	; 0C8F
+	mov	byte ptr .22e2h,00h	; 0C91
+
+l0c96:	; branch target
+	cmp	word ptr 03h[si],00h	; 0C96
+	jz	l0cda	; 0C9A
+	mov	ax,03h[si]	; 0C9C
+	mov	.22d7h,ax	; 0C9F
+	cmp	word ptr 07h[si],00h	; 0CA2
+	mov	ax,05h[si]	; 0CA6
+	jz	l0cae	; 0CA9
+	mov	ax,07h[si]	; 0CAB
+
+l0cae:	; branch target
+	mov	.22d9h,ax	; 0CAE
+	push	cx	; 0CB1
+	mov	cl,38h	; 0CB2
+	push	dx	; 0CB4
+	call	l0c58	; 0CB5
+	pop	dx	; 0CB8
+	pop	cx	; 0CB9
+	cmp	byte ptr .249bh,00h	; 0CBA
+	jz	l0cf2	; 0CBF
+	push	cx	; 0CC1
+	mov	cl,36h	; 0CC2
+	call	l0c58	; 0CC4
+	pop	cx	; 0CC7
+	mov	ax,.22d9h	; 0CC8
+	cmp	05h[si],ax	; 0CCB
+	jnc	l0ced	; 0CCE
+	mov	07h[si],ax	; 0CD0
+	mov	cl,38h	; 0CD3
+	call	l0c58	; 0CD5
+	jmps	l0cf2	; 0CD8
+
+l0cda:	; branch target
+	add	bx,05h[si]	; 0CDA
+	cmp	word ptr 07h[si],00h	; 0CDD
+	jz	l0cef	; 0CE1
+	add	dx,07h[si]	; 0CE3
+	jnc	l0cf2	; 0CE6
+	mov	dx,0fff0h	; 0CE8
+	jmps	l0cf2	; 0CEB
+
+l0ced:	; branch target
+	jmps	l0d4a	; 0CED
+
+l0cef:	; branch target
+	add	dx,05h[si]	; 0CEF
+
+l0cf2:	; branch target
+	add	si,09h	; 0CF2
+	loop	l0c87	; 0CF5
+	or	dx,dx	; 0CF7
+	jz	l0d24	; 0CF9
+	mov	.22d9h,dx	; 0CFB
+	mov	cl,37h	; 0CFF
+	call	l0c58	; 0D01
+	cmp	byte ptr .249bh,00h	; 0D04
+	jz	l0d24	; 0D09
+	mov	cl,35h	; 0D0B
+	call	l0c58	; 0D0D
+	cmp	bx,.22d9h	; 0D10
+	ja	l0ced	; 0D14
+	mov	cl,37h	; 0D16
+	call	l0c58	; 0D18
+	mov	dx,.22d9h	; 0D1B
+	sub	dx,bx	; 0D1F
+	call	l0d50	; 0D21
+
+l0d24:	; branch target
+	mov	di,.2394h	; 0D24
+	mov	ax,.2323h	; 0D28
+	mov	cx,cs	; 0D2B
+	cmp	ax,cx	; 0D2D
+	jnz	l0d39	; 0D2F
+	mov	byte ptr 04h[di],01h	; 0D31
+	inc	byte ptr .2393h	; 0D35
+
+l0d39:	; branch target
+	jmps	l0d4d	; 0D39
+
+l0d3b:	; branch target
+	mov	si,220ch	; 0D3B
+	mov	cx,08h	; 0D3E
+
+l0d41:	; branch target
+	cmp	[si],al	; 0D41
+	jz	l0d4d	; 0D43
+	add	si,09h	; 0D45
+	loop	l0d41	; 0D48
+
+l0d4a:	; branch target
+	mov	al,0ffh	; 0D4A
+	ret	; 0D4C
+
+l0d4d:	; branch target
+	mov	al,00h	; 0D4D
+	ret	; 0D4F
+
+l0d50:	; branch target
+	cmp	byte ptr .22e2h,0ffh	; 0D50
+	jnz	l0d62	; 0D55
+	mov	bx,.2211h	; 0D57
+	add	bx,dx	; 0D5B
+	mov	.2213h,bx	; 0D5D
+	ret	; 0D61
+
+l0d62:	; branch target
+	mov	al,02h	; 0D62
+	call	l0d3b	; 0D64
+	cmp	word ptr 07h[si],00h	; 0D67
+	jz	l0d9b	; 0D6B
+	mov	di,si	; 0D6D
+	mov	ax,03h	; 0D6F
+	call	l0d3b	; 0D72
+	cmp	word ptr 07h[si],00h	; 0D75
+	jz	l0d94	; 0D79
+	call	l0c61	; 0D7B
+	shr	dx,1	; 0D7E
+	mov	bx,dx	; 0D80
+	add	bx,05h[si]	; 0D82
+	cmp	bx,07h[si]	; 0D85
+	jna	l0d91	; 0D88
+	sub	bx,07h[si]	; 0D8A
+	add	dx,bx	; 0D8D
+	jmps	l0d94	; 0D8F
+
+l0d91:	; branch target
+	mov	07h[si],bx	; 0D91
+
+l0d94:	; branch target
+	add	dx,05h[di]	; 0D94
+	mov	07h[di],dx	; 0D97
+	ret	; 0D9A
+
+l0d9b:	; branch target
+	mov	al,03h	; 0D9B
+	call	l0d3b	; 0D9D
+	add	dx,05h[si]	; 0DA0
+	mov	07h[si],dx	; 0DA3
+	ret	; 0DA6
+
+l0da7:	; branch target
+	cmp	word ptr 07h[si],00h	; 0DA7
+	jz	l0db1	; 0DAB
+	add	ax,07h[si]	; 0DAD
+	ret	; 0DB0
+
+l0db1:	; branch target
+	add	ax,05h[si]	; 0DB1
+	ret	; 0DB4
+
+l0db5:	; branch target
+	mov	byte ptr .22d6h,00h	; 0DB5
+	mov	ax,.22d7h	; 0DBA
+	cmp	byte ptr .22e2h,0ffh	; 0DBD
+	jnz	l0dd1	; 0DC2
+	mov	byte ptr .22d6h,01h	; 0DC4
+	mov	.220fh,ax	; 0DC9
+	mov	.22d4h,ax	; 0DCC
+	jmps	l0dfd	; 0DCF
+
+l0dd1:	; branch target
+	mov	si,220ch	; 0DD1
+	mov	cx,08h	; 0DD4
+
+l0dd7:	; branch target
+	cmp	byte ptr [si],00h	; 0DD7
+	jz	l0df5	; 0DDA
+	cmp	byte ptr [si],02h	; 0DDC
+	jnz	l0de4	; 0DDF
+	mov	.22d4h,ax	; 0DE1
+
+l0de4:	; branch target
+	cmp	word ptr 03h[si],00h	; 0DE4
+	jnz	l0df8	; 0DE8
+	mov	03h[si],ax	; 0DEA
+	cmp	byte ptr [si],09h	; 0DED
+	jnz	l0df5	; 0DF0
+	mov	byte ptr [si],01h	; 0DF2
+
+l0df5:	; branch target
+	call	l0da7	; 0DF5
+
+l0df8:	; branch target
+	add	si,09h	; 0DF8
+	loop	l0dd7	; 0DFB
+
+l0dfd:	; branch target
+	ret	; 0DFD
+
+l0dfe:	; branch target
+	cmp	bp,70h	; 0DFE
+	jnz	l0e11	; 0E01
+	push	bx	; 0E03
+	push	es	; 0E04
+	call	l0c46	; 0E05
+	pop	es	; 0E08
+	pop	bx	; 0E09
+	mov	bp,00h	; 0E0A
+	mov	si,2254h	; 0E0D
+	ret	; 0E10
+
+l0e11:	; branch target
+	add	bp,10h	; 0E11
+	ret	; 0E14
+
+l0e15:	; branch target
+	mov	bx,ax	; 0E15
+	and	ax,0f000h	; 0E17
+	mov	cl,04h	; 0E1A
+	shr	ah,cl	; 0E1C
+	mov	cl,04h	; 0E1E
+	shl	bx,cl	; 0E20
+	sub	bx,01h	; 0E22
+	jnc	l0e29	; 0E25
+	dec	ah	; 0E27
+
+l0e29:	; branch target
+	ret	; 0E29
+	mov	ax,.249dh	; 0E2A
+	mov	.2323h,ax	; 0E2D
+	mov	ax,.2499h	; 0E30
+	mov	.22dch,ax	; 0E33
+	mov	ax,.2494h	; 0E36
+	mov	.22e0h,ax	; 0E39
+	mov	ax,.2496h	; 0E3C
+	mov	.22deh,ax	; 0E3F
+	mov	dx,cs	; 0E42
+	mov	cl,33h	; 0E44
+	call	l0a00	; 0E46
+	mov	dx,220ch	; 0E49
+	mov	cl,1ah	; 0E4C
+	call	l0a00	; 0E4E
+	call	l0c46	; 0E51
+	cmp	byte ptr .249bh,00h	; 0E54
+	jz	l0e5e	; 0E59
+
+l0e5b:	; branch target
+	jmp	l0f3b	; 0E5B
+
+l0e5e:	; branch target
+	call	l0c78	; 0E5E
+	test	al,al	; 0E61
+	jnz	l0e5b	; 0E63
+	call	l0db5	; 0E65
+	mov	dx,2254h	; 0E68
+	mov	cl,1ah	; 0E6B
+	call	l0a00	; 0E6D
+	mov	bp,70h	; 0E70
+	mov	cx,08h	; 0E73
+	mov	bx,220ch	; 0E76
+
+l0e79:	; branch target
+	push	cx	; 0E79
+	cmp	byte ptr [bx],00h	; 0E7A
+	jz	l0eb3	; 0E7D
+	mov	es,word ptr 03h[bx]	; 0E7F
+	mov	di,00h	; 0E82
+	mov	cx,01h[bx]	; 0E85
+	jcxz	l0eb3	; 0E88
+
+l0e8a:	; branch target
+	push	cx	; 0E8A
+	call	l0dfe	; 0E8B
+
+; The transient loader copies eight words per paragraph. Descriptor 220Ch
+; is the first CMD group: only that group receives XOR A5B4h. The image
+; encoder therefore requires CODE to be first; other groups stay unchanged.
+copy_paragraph:	; copy_paragraph
+	mov	cx,08h	; 0E8E
+	cld	; 0E91
+	mov	dx,00h	; 0E92
+	cmp	bx,220ch	; 0E95
+	jnz	copy_word	; 0E99
+	mov	dx,0a5b4h	; 0E9B
+
+copy_word:	; copy_word
+	lodsw	; 0E9E
+	xor	ax,dx	; 0E9F
+	stosw	; 0EA1
+	loop	copy_word	; 0EA2
+	cmp	di,00h	; 0EA4
+	jnz	l0eb0	; 0EA7
+	mov	dx,es	; 0EA9
+	add	dh,10h	; 0EAB
+	mov	es,dx	; 0EAE
+
+l0eb0:	; branch target
+	pop	cx	; 0EB0
+	loop	l0e8a	; 0EB1
+
+l0eb3:	; branch target
+	pop	cx	; 0EB3
+	add	bx,09h	; 0EB4
+	loop	l0e79	; 0EB7
+	mov	es,word ptr .22d4h	; 0EB9
+	mov	word ptr .249bh,es	; 0EBD
+	mov	di,00h	; 0EC1
+	mov	cx,30h	; 0EC4
+	mov	al,00h	; 0EC7
+	cld	; 0EC9
+	rep	stosb	; 0ECA
+	mov	di,00h	; 0ECC
+	mov	al,.22d6h	; 0ECF
+	mov	es:05h[di],al	; 0ED2
+	mov	dl,01h	; 0ED6
+
+l0ed8:	; branch target
+	mov	si,220ch	; 0ED8
+	mov	cx,08h	; 0EDB
+
+l0ede:	; branch target
+	cmp	[si],dl	; 0EDE
+	jz	l0ee9	; 0EE0
+	add	si,09h	; 0EE2
+	loop	l0ede	; 0EE5
+	jmps	l0f19	; 0EE7
+
+l0ee9:	; branch target
+	mov	ax,03h[si]	; 0EE9
+	mov	es:03h[di],ax	; 0EEC
+	mov	ax,05h[si]	; 0EF0
+	cmp	word ptr 07h[si],00h	; 0EF3
+	jz	l0efc	; 0EF7
+	mov	ax,07h[si]	; 0EF9
+
+l0efc:	; branch target
+	call	l0e15	; 0EFC
+	mov	es:02h[di],ah	; 0EFF
+	mov	es:[di],bx	; 0F03
+	cmp	byte ptr .22e2h,0ffh	; 0F06
+	jnz	l0f19	; 0F0B
+	add	di,06h	; 0F0D
+	mov	es:02h[di],ah	; 0F10
+	mov	es:[di],bx	; 0F14
+	jmps	l0f23	; 0F17
+
+l0f19:	; branch target
+	inc	dl	; 0F19
+	add	di,06h	; 0F1B
+	cmp	dl,08h	; 0F1E
+	jna	l0ed8	; 0F21
+
+l0f23:	; branch target
+	mov	ax,.22dch	; 0F23
+	mov	.2499h,ax	; 0F26
+	mov	byte ptr .2498h,00h	; 0F29
+	mov	ax,.22e0h	; 0F2E
+	mov	.2494h,ax	; 0F31
+	mov	ax,.22deh	; 0F34
+	mov	.2496h,ax	; 0F37
+	ret	; 0F3A
+
+l0f3b:	; branch target
+	jmp	l0a23	; 0F3B
+	mov	al,.2310h	; 0F3E
+	cmp	al,01h	; 0F41
+	jz	l0f5f	; 0F43
+
+l0f45:	; branch target
+	cmp	byte ptr .2393h,01h	; 0F45
+	ja	l0f51	; 0F4A
+	call	l0a32	; 0F4C
+	jmps	l0f5f	; 0F4F
+
+l0f51:	; branch target
+	call	l1147	; 0F51
+	mov	bx,.2394h	; 0F54
+	call	l1045	; 0F58
+	dec	byte ptr .2393h	; 0F5B
+
+l0f5f:	; branch target
+	mov	byte ptr .2498h,00h	; 0F5F
+	mov	bx,2503h	; 0F64
+	jmp	l161d	; 0F67
+	push	ds	; 0F6A
+	mov	ds,word ptr .249dh	; 0F6B
+	mov	bx,dx	; 0F6F
+	mov	al,[bx]	; 0F71
+	mov	cx,01h[bx]	; 0F73
+	mov	dx,03h[bx]	; 0F76
+	pop	ds	; 0F79
+	pop	bx	; 0F7A
+	xor	bx,bx	; 0F7B
+	mov	bl,al	; 0F7D
+	add	al,al	; 0F7F
+	add	bl,al	; 0F81
+	add	bx,2500h	; 0F83
+	jmp	l161d	; 0F87
+	mov	.24a2h,dx	; 0F8A
+	mov	cx,dx	; 0F8E
+	call	l2533	; 0F90
+	ret	; 0F93
+	mov	bx,.24a2h	; 0F94
+	mov	.2325h,bx	; 0F98
+	mov	bx,.24a0h	; 0F9C
+	jmp	l2150	; 0FA0
+
+l0fa3:	; branch target
+	sub	word ptr .2394h,05h	; 0FA3
+	mov	di,.2394h	; 0FA8
+	mov	ax,[bx]	; 0FAC
+	mov	[di],ax	; 0FAE
+	mov	ax,02h[bx]	; 0FB0
+	mov	02h[di],ax	; 0FB3
+	mov	byte ptr 04h[di],00h	; 0FB6
+	add	byte ptr .2329h,01h	; 0FBA
+	ret	; 0FBF
+	call	l115e	; 0FC0
+	jnz	l0fcf	; 0FC3
+	cmp	byte ptr .232ah,00h	; 0FC5
+	jz	l103f	; 0FCA
+	call	l11bc	; 0FCC
+
+l0fcf:	; branch target
+	jnz	l103f	; 0FCF
+	mov	ax,02h[si]	; 0FD1
+	cmp	02h[bx],ax	; 0FD4
+	jc	l0fdc	; 0FD7
+	mov	02h[bx],ax	; 0FD9
+
+l0fdc:	; branch target
+	mov	ax,[si]	; 0FDC
+	mov	[bx],ax	; 0FDE
+	jmps	l1035	; 0FE0
+	call	l115e	; 0FE2
+	jnz	l103f	; 0FE5
+
+l0fe7:	; branch target
+	add	si,04h	; 0FE7
+	inc	cl	; 0FEA
+	cmp	cl,.232ah	; 0FEC
+	jnc	l103f	; 0FF0
+	call	l123d	; 0FF2
+	jnz	l0fe7	; 0FF5
+	mov	ax,02h[si]	; 0FF7
+	add	ax,[si]	; 0FFA
+	sub	ax,[bx]	; 0FFC
+	cmp	02h[bx],ax	; 0FFE
+	jc	l1006	; 1001
+	mov	02h[bx],ax	; 1003
+
+l1006:	; branch target
+	jmps	l1035	; 1006
+	call	l115e	; 1008
+	jnz	l103f	; 100B
+	call	l11ed	; 100D
+	jnz	l103f	; 1010
+	call	l1180	; 1012
+	call	l0fa3	; 1015
+	jmps	l1035	; 1018
+	call	l115e	; 101A
+	jnz	l103f	; 101D
+
+l101f:	; branch target
+	add	si,04h	; 101F
+	inc	cl	; 1022
+	cmp	cl,.232ah	; 1024
+	jnc	l103f	; 1028
+	call	l123d	; 102A
+	jnz	l101f	; 102D
+	call	l1275	; 102F
+	call	l0fa3	; 1032
+
+l1035:	; branch target
+	mov	al,.232ah	; 1035
+	mov	04h[bx],al	; 1038
+	xor	al,al	; 103B
+	jmps	l1041	; 103D
+
+l103f:	; branch target
+	mov	al,0ffh	; 103F
+
+l1041:	; branch target
+	mov	.249bh,al	; 1041
+	ret	; 1044
+
+l1045:	; branch target
+	mov	ax,02h[bx]	; 1045
+	mov	.22d9h,ax	; 1048
+	mov	ax,[bx]	; 104B
+	mov	.22d7h,ax	; 104D
+	mov	bx,22d7h	; 1050
+	call	l1167	; 1053
+	jmps	l1066	; 1056
+	call	l115e	; 1058
+	cmp	byte ptr 04h[bx],0ffh	; 105B
+	jnz	l1066	; 105F
+	call	l1147	; 1061
+	jmps	l1035	; 1064
+
+l1066:	; branch target
+	cmp	word ptr 02h[bx],00h	; 1066
+	jz	l103f	; 106A
+	call	l12db	; 106C
+	jnz	l103f	; 106F
+	call	l1306	; 1071
+	jz	l103f	; 1074
+	call	l10dc	; 1076
+	cmp	al,00h	; 1079
+	jnz	l103f	; 107B
+	call	l1344	; 107D
+	jnz	l1098	; 1080
+	mov	di,si	; 1082
+	mov	ch,cl	; 1084
+	call	l136f	; 1086
+	jz	l1093	; 1089
+	mov	ax,02h[bx]	; 108B
+	add	02h[di],ax	; 108E
+	jmps	l1035	; 1091
+
+l1093:	; branch target
+	call	l12ce	; 1093
+	jmps	l1035	; 1096
+
+l1098:	; branch target
+	call	l136f	; 1098
+	jnz	l10a9	; 109B
+	mov	ax,[bx]	; 109D
+	mov	[si],ax	; 109F
+	mov	ax,02h[bx]	; 10A1
+	add	02h[si],ax	; 10A4
+
+l10a7:	; branch target
+	jmps	l1035	; 10A7
+
+l10a9:	; branch target
+	call	l1263	; 10A9
+	mov	ax,[bx]	; 10AC
+	mov	[si],ax	; 10AE
+	mov	ax,02h[bx]	; 10B0
+	mov	02h[si],ax	; 10B3
+	jmps	l10a7	; 10B6
+
+l10b8:	; branch target
+	xor	ax,ax	; 10B8
+	mov	.2329h,al	; 10BA
+	mov	.2393h,al	; 10BD
+	mov	ax,2393h	; 10C0
+	mov	.2394h,ax	; 10C3
+	call	l2536	; 10C6
+	mov	si,bx	; 10C9
+	mov	cl,[si]	; 10CB
+	shl	cl,1	; 10CD
+	shl	cl,1	; 10CF
+	inc	cl	; 10D1
+	xor	ch,ch	; 10D3
+	mov	di,232ah	; 10D5
+	cld	; 10D8
+	rep	movsb	; 10D9
+	ret	; 10DB
+
+l10dc:	; branch target
+	mov	cl,.2329h	; 10DC
+	mov	ch,00h	; 10E0
+	mov	di,238eh	; 10E2
+
+l10e5:	; branch target
+	mov	ax,[bx]	; 10E5
+	cmp	[di],ax	; 10E7
+	jz	l110c	; 10E9
+	jnc	l1104	; 10EB
+	mov	dx,[di]	; 10ED
+	add	dx,02h[di]	; 10EF
+	add	ax,02h[bx]	; 10F2
+	cmp	ax,dx	; 10F5
+	jnz	l1104	; 10F7
+	mov	ax,02h[di]	; 10F9
+	sub	ax,02h[bx]	; 10FC
+	mov	02h[di],ax	; 10FF
+	jmps	l1144	; 1102
+
+l1104:	; branch target
+	sub	di,05h	; 1104
+	loop	l10e5	; 1107
+
+l1109:	; branch target
+	mov	al,0ffh	; 1109
+	ret	; 110B
+
+l110c:	; branch target
+	mov	ax,02h[bx]	; 110C
+	cmp	ax,02h[di]	; 110F
+	jz	l1125	; 1112
+	jnc	l1109	; 1114
+	add	ax,[di]	; 1116
+	mov	[di],ax	; 1118
+	mov	ax,02h[di]	; 111A
+	sub	ax,02h[bx]	; 111D
+	mov	02h[di],ax	; 1120
+	jmps	l1144	; 1123
+
+l1125:	; branch target
+	mov	ax,-05h[di]	; 1125
+	mov	[di],ax	; 1128
+	mov	ax,-03h[di]	; 112A
+	mov	02h[di],ax	; 112D
+	mov	al,-01h[di]	; 1130
+	mov	04h[di],al	; 1133
+	sub	di,05h	; 1136
+	loop	l110c	; 1139
+	dec	byte ptr .2329h	; 113B
+	add	word ptr .2394h,05h	; 113F
+
+l1144:	; branch target
+	mov	al,00h	; 1144
+	ret	; 1146
+
+l1147:	; branch target
+	cmp	byte ptr .2329h,00h	; 1147
+	jz	l115d	; 114C
+	mov	bx,.2394h	; 114E
+	cmp	byte ptr 04h[bx],00h	; 1152
+	jnz	l115d	; 1156
+	call	l1045	; 1158
+	jmps	l1147	; 115B
+
+l115d:	; branch target
+	ret	; 115D
+
+l115e:	; branch target
+	mov	cl,05h	; 115E
+	call	l0bf2	; 1160
+	mov	bx,.2499h	; 1163
+
+l1167:	; branch target
+	mov	cl,0ffh	; 1167
+	mov	si,2327h	; 1169
+	mov	al,0ffh	; 116C
+	cmp	byte ptr .2329h,08h	; 116E
+	jnc	l117d	; 1173
+	cmp	word ptr 02h[bx],00h	; 1175
+	jz	l117d	; 1179
+	inc	al	; 117B
+
+l117d:	; branch target
+	or	al,al	; 117D
+	ret	; 117F
+
+l1180:	; branch target
+	push	cx	; 1180
+	mov	ax,02h[si]	; 1181
+	sub	ax,02h[bx]	; 1184
+	jnz	l1192	; 1187
+	mov	ax,[si]	; 1189
+	mov	[bx],ax	; 118B
+	call	l119b	; 118D
+	jmps	l1199	; 1190
+
+l1192:	; branch target
+	mov	02h[si],ax	; 1192
+	add	ax,[si]	; 1195
+	mov	[bx],ax	; 1197
+
+l1199:	; branch target
+	pop	cx	; 1199
+	ret	; 119A
+
+l119b:	; branch target
+	push	cx	; 119B
+	push	si	; 119C
+	push	di	; 119D
+	mov	al,.232ah	; 119E
+	dec	al	; 11A1
+	mov	.232ah,al	; 11A3
+	sub	al,cl	; 11A6
+	jz	l11b8	; 11A8
+	mov	cl,al	; 11AA
+	xor	ch,ch	; 11AC
+	add	cx,cx	; 11AE
+	mov	di,si	; 11B0
+	add	si,04h	; 11B2
+	cld	; 11B5
+	rep	movsw	; 11B6
+
+l11b8:	; branch target
+	pop	di	; 11B8
+	pop	si	; 11B9
+	pop	cx	; 11BA
+	ret	; 11BB
+
+l11bc:	; branch target
+	push	dx	; 11BC
+	push	di	; 11BD
+	xor	dx,dx	; 11BE
+	mov	ch,0ffh	; 11C0
+
+l11c2:	; branch target
+	add	si,04h	; 11C2
+	inc	cl	; 11C5
+	cmp	cl,.232ah	; 11C7
+	jnc	l11dc	; 11CB
+	mov	ax,02h[si]	; 11CD
+	cmp	ax,dx	; 11D0
+	jc	l11c2	; 11D2
+	mov	dx,ax	; 11D4
+	mov	ch,cl	; 11D6
+	mov	di,si	; 11D8
+	jmps	l11c2	; 11DA
+
+l11dc:	; branch target
+	mov	al,0ffh	; 11DC
+	mov	si,di	; 11DE
+	mov	cl,ch	; 11E0
+	inc	ch	; 11E2
+	jz	l11e8	; 11E4
+	inc	al	; 11E6
+
+l11e8:	; branch target
+	or	al,al	; 11E8
+	pop	di	; 11EA
+	pop	dx	; 11EB
+	ret	; 11EC
+
+l11ed:	; branch target
+	push	dx	; 11ED
+	push	di	; 11EE
+	mov	dx,0ffffh	; 11EF
+	mov	ch,0ffh	; 11F2
+
+l11f4:	; branch target
+	add	si,04h	; 11F4
+	inc	cl	; 11F7
+	cmp	cl,.232ah	; 11F9
+	jnc	l1215	; 11FD
+	mov	ax,02h[si]	; 11FF
+	sub	ax,02h[bx]	; 1202
+	jz	l1221	; 1205
+	jc	l11f4	; 1207
+	cmp	ax,dx	; 1209
+	jnc	l11f4	; 120B
+	mov	dx,ax	; 120D
+	mov	ch,cl	; 120F
+	mov	di,si	; 1211
+	jmps	l11f4	; 1213
+
+l1215:	; branch target
+	mov	al,0ffh	; 1215
+	mov	si,di	; 1217
+	mov	cl,ch	; 1219
+	inc	ch	; 121B
+	jz	l1221	; 121D
+	inc	al	; 121F
+
+l1221:	; branch target
+	or	al,al	; 1221
+	pop	di	; 1223
+	pop	dx	; 1224
+	ret	; 1225
+
+l1226:	; branch target
+	mov	ax,02h[bx]	; 1226
+	add	ax,[bx]	; 1229
+	ret	; 122B
+
+l122c:	; branch target
+	push	bx	; 122C
+	call	l1226	; 122D
+	mov	02h[bp],ax	; 1230
+	mov	bx,si	; 1233
+	call	l1226	; 1235
+	mov	00h[bp],ax	; 1238
+	pop	bx	; 123B
+	ret	; 123C
+
+l123d:	; branch target
+	push	bp	; 123D
+	sub	sp,04h	; 123E
+	mov	bp,sp	; 1241
+	push	cx	; 1243
+	mov	ch,0ffh	; 1244
+	call	l122c	; 1246
+	mov	ax,[bx]	; 1249
+	cmp	ax,[si]	; 124B
+	jc	l1259	; 124D
+	mov	ax,00h[bp]	; 124F
+	cmp	ax,02h[bp]	; 1252
+	jc	l1259	; 1255
+	mov	ch,00h	; 1257
+
+l1259:	; branch target
+	mov	al,ch	; 1259
+	pop	cx	; 125B
+	add	sp,04h	; 125C
+	pop	bp	; 125F
+	or	al,al	; 1260
+	ret	; 1262
+
+l1263:	; branch target
+	mov	al,.232ah	; 1263
+	inc	byte ptr .232ah	; 1266
+	mov	ah,04h	; 126A
+	mul	ah	; 126C
+	mov	si,ax	; 126E
+	lea	si,232bh[si]	; 1270
+	ret	; 1274
+
+l1275:	; branch target
+	push	bp	; 1275
+	sub	sp,04h	; 1276
+	mov	bp,sp	; 1279
+	push	dx	; 127B
+	push	cx	; 127C
+	call	l122c	; 127D
+	mov	ax,[bx]	; 1280
+	cmp	ax,[si]	; 1282
+	jnz	l129f	; 1284
+	mov	ax,02h[bp]	; 1286
+	cmp	ax,00h[bp]	; 1289
+	jnz	l1295	; 128C
+	pop	cx	; 128E
+	push	cx	; 128F
+	call	l119b	; 1290
+	jmps	l12c7	; 1293
+
+l1295:	; branch target
+	mov	[si],ax	; 1295
+	mov	ax,02h[bx]	; 1297
+	sub	02h[si],ax	; 129A
+	jmps	l12c7	; 129D
+
+l129f:	; branch target
+	mov	ax,00h[bp]	; 129F
+	sub	ax,02h[bp]	; 12A2
+	jnz	l12b0	; 12A5
+	mov	ax,[bx]	; 12A7
+	sub	ax,[si]	; 12A9
+	mov	02h[si],ax	; 12AB
+	jmps	l12c7	; 12AE
+
+l12b0:	; branch target
+	mov	ax,[bx]	; 12B0
+	sub	ax,[si]	; 12B2
+	mov	02h[si],ax	; 12B4
+	call	l1263	; 12B7
+	mov	ax,02h[bp]	; 12BA
+	mov	[si],ax	; 12BD
+	sub	ax,00h[bp]	; 12BF
+	neg	ax	; 12C2
+	mov	02h[si],ax	; 12C4
+
+l12c7:	; branch target
+	pop	cx	; 12C7
+	pop	dx	; 12C8
+	add	sp,04h	; 12C9
+	pop	bp	; 12CC
+	ret	; 12CD
+
+l12ce:	; branch target
+	mov	ax,02h[bx]	; 12CE
+	add	ax,02h[si]	; 12D1
+	add	02h[di],ax	; 12D4
+	call	l119b	; 12D7
+	ret	; 12DA
+
+l12db:	; branch target
+	push	cx	; 12DB
+	push	dx	; 12DC
+	push	si	; 12DD
+	push	bx	; 12DE
+	call	l2536	; 12DF
+	mov	ch,[bx]	; 12E2
+	mov	si,bx	; 12E4
+	sub	si,03h	; 12E6
+	pop	bx	; 12E9
+	mov	cl,0ffh	; 12EA
+
+l12ec:	; branch target
+	add	si,04h	; 12EC
+	inc	cl	; 12EF
+	cmp	cl,ch	; 12F1
+	jnc	l12fe	; 12F3
+	call	l123d	; 12F5
+	jnz	l12ec	; 12F8
+	mov	al,00h	; 12FA
+	jmps	l1300	; 12FC
+
+l12fe:	; branch target
+	mov	al,0ffh	; 12FE
+
+l1300:	; branch target
+	pop	si	; 1300
+	pop	dx	; 1301
+	pop	cx	; 1302
+	or	al,al	; 1303
+	ret	; 1305
+
+l1306:	; branch target
+	push	bp	; 1306
+	sub	sp,04h	; 1307
+	mov	bp,sp	; 130A
+	push	si	; 130C
+	push	cx	; 130D
+	mov	si,2327h	; 130E
+	mov	cl,0ffh	; 1311
+
+l1313:	; branch target
+	add	si,04h	; 1313
+	inc	cl	; 1316
+	cmp	cl,.232ah	; 1318
+	jnc	l1339	; 131C
+	call	l122c	; 131E
+	mov	ax,[bx]	; 1321
+	cmp	ax,[si]	; 1323
+	jnc	l1330	; 1325
+	mov	ax,02h[bp]	; 1327
+	cmp	ax,[si]	; 132A
+	ja	l1335	; 132C
+	jmps	l1313	; 132E
+
+l1330:	; branch target
+	cmp	ax,00h[bp]	; 1330
+	jnc	l1313	; 1333
+
+l1335:	; branch target
+	mov	al,00h	; 1335
+	jmps	l133b	; 1337
+
+l1339:	; branch target
+	mov	al,0ffh	; 1339
+
+l133b:	; branch target
+	pop	cx	; 133B
+	pop	si	; 133C
+	add	sp,04h	; 133D
+	pop	bp	; 1340
+	or	al,al	; 1341
+	ret	; 1343
+
+l1344:	; branch target
+	push	bp	; 1344
+	sub	sp,04h	; 1345
+	mov	bp,sp	; 1348
+	mov	si,2327h	; 134A
+	mov	cl,0ffh	; 134D
+
+l134f:	; branch target
+	add	si,04h	; 134F
+	inc	cl	; 1352
+	cmp	cl,.232ah	; 1354
+	jnc	l1366	; 1358
+	call	l122c	; 135A
+	mov	ax,[bx]	; 135D
+	sub	ax,00h[bp]	; 135F
+	jnz	l134f	; 1362
+	jmps	l1368	; 1364
+
+l1366:	; branch target
+	mov	al,0ffh	; 1366
+
+l1368:	; branch target
+	add	sp,04h	; 1368
+	pop	bp	; 136B
+	or	al,al	; 136C
+	ret	; 136E
+
+l136f:	; branch target
+	push	bp	; 136F
+	sub	sp,04h	; 1370
+	mov	bp,sp	; 1373
+	mov	si,2327h	; 1375
+	mov	cl,0ffh	; 1378
+
+l137a:	; branch target
+	add	si,04h	; 137A
+	inc	cl	; 137D
+	cmp	cl,.232ah	; 137F
+	jnc	l1391	; 1383
+	call	l122c	; 1385
+	mov	ax,02h[bp]	; 1388
+	sub	ax,[si]	; 138B
+	jnz	l137a	; 138D
+	jmps	l1393	; 138F
+
+l1391:	; branch target
+	mov	al,0ffh	; 1391
+
+l1393:	; branch target
+	add	sp,04h	; 1393
+	pop	bp	; 1396
+	or	al,al	; 1397
+	ret	; 1399
+
+l139a:	; branch target
+	mov	bx,22e6h	; 139A
+	mov	al,[bx]	; 139D
+	mov	byte ptr [bx],00h	; 139F
+	or	al,al	; 13A2
+	jnz	l13cb	; 13A4
+	jmp	l1610	; 13A6
+
+l13a9:	; branch target
+	call	l139a	; 13A9
+	call	l13b9	; 13AC
+	jc	l13cb	; 13AF
+	push	ax	; 13B1
+	mov	cl,al	; 13B2
+	call	l1472	; 13B4
+	pop	ax	; 13B7
+	ret	; 13B8
+
+l13b9:	; branch target
+	cmp	al,0dh	; 13B9
+	jz	l13cb	; 13BB
+	cmp	al,0ah	; 13BD
+	jz	l13cb	; 13BF
+	cmp	al,09h	; 13C1
+	jz	l13cb	; 13C3
+	cmp	al,08h	; 13C5
+	jz	l13cb	; 13C7
+	cmp	al,20h	; 13C9
+
+l13cb:	; branch target
+	ret	; 13CB
+
+l13cc:	; branch target
+	mov	al,.22e6h	; 13CC
+	or	al,al	; 13CF
+	jnz	l1419	; 13D1
+	call	l1615	; 13D3
+	and	al,01h	; 13D6
+	jz	l13cb	; 13D8
+	call	l1610	; 13DA
+	cmp	al,13h	; 13DD
+	jnz	l1416	; 13DF
+	call	l1610	; 13E1
+	cmp	al,03h	; 13E4
+	jz	l13eb	; 13E6
+	xor	al,al	; 13E8
+	ret	; 13EA
+
+l13eb:	; branch target
+	mov	byte ptr .22e5h,00h	; 13EB
+	call	l2015	; 13F0
+	cmp	byte ptr .2393h,00h	; 13F3
+	jnz	l1402	; 13F8
+	mov	al,.249bh	; 13FA
+	mov	.0805h,al	; 13FD
+	jmps	l1410	; 1400
+
+l1402:	; branch target
+	test	byte ptr .24afh,0ffh	; 1402
+	jz	l1413	; 1407
+	cmp	byte ptr .2393h,01h	; 1409
+	jnz	l1413	; 140E
+
+l1410:	; branch target
+	jmp	l0f5f	; 1410
+
+l1413:	; branch target
+	jmp	l0f45	; 1413
+
+l1416:	; branch target
+	mov	.22e6h,al	; 1416
+
+l1419:	; branch target
+	mov	al,01h	; 1419
+	ret	; 141B
+
+l141c:	; branch target
+	mov	al,.22e3h	; 141C
+	or	al,al	; 141F
+	jnz	l1439	; 1421
+	push	cx	; 1423
+	call	l13cc	; 1424
+	pop	cx	; 1427
+	push	cx	; 1428
+	call	l161a	; 1429
+	pop	cx	; 142C
+	push	cx	; 142D
+	cmp	byte ptr .24b6h,00h	; 142E
+	jz	l1438	; 1433
+	call	l160b	; 1435
+
+l1438:	; branch target
+	pop	cx	; 1438
+
+l1439:	; branch target
+	mov	al,cl	; 1439
+	mov	bx,22e5h	; 143B
+	cmp	al,7fh	; 143E
+	jz	l1458	; 1440
+	inc	byte ptr [bx]	; 1442
+	cmp	al,20h	; 1444
+	jnc	l1458	; 1446
+	dec	byte ptr [bx]	; 1448
+	mov	al,[bx]	; 144A
+	or	al,al	; 144C
+	jz	l1458	; 144E
+	mov	al,cl	; 1450
+	cmp	al,08h	; 1452
+	jnz	l1459	; 1454
+	dec	byte ptr [bx]	; 1456
+
+l1458:	; branch target
+	ret	; 1458
+
+l1459:	; branch target
+	cmp	al,0ah	; 1459
+	jnz	l1458	; 145B
+	mov	byte ptr [bx],00h	; 145D
+	ret	; 1460
+
+l1461:	; branch target
+	mov	al,cl	; 1461
+	call	l13b9	; 1463
+	jnc	l1472	; 1466
+	push	ax	; 1468
+	mov	cl,5eh	; 1469
+	call	l141c	; 146B
+	pop	cx	; 146E
+	or	cl,40h	; 146F
+
+l1472:	; branch target
+	cmp	cl,09h	; 1472
+	jnz	l141c	; 1475
+
+l1477:	; branch target
+	mov	cl,20h	; 1477
+	call	l141c	; 1479
+	mov	al,.22e5h	; 147C
+	and	al,07h	; 147F
+	jnz	l1477	; 1481
+
+l1483:	; branch target
+	ret	; 1483
+
+l1484:	; branch target
+	call	l148c	; 1484
+	mov	cl,20h	; 1487
+	call	l161a	; 1489
+
+l148c:	; branch target
+	mov	cl,08h	; 148C
+	jmp	l161a	; 148E
+
+l1491:	; branch target
+	mov	cl,23h	; 1491
+	call	l141c	; 1493
+	call	l14a9	; 1496
+
+l1499:	; branch target
+	mov	al,.22e5h	; 1499
+	cmp	al,.22e4h	; 149C
+	jnc	l1483	; 14A0
+	mov	cl,20h	; 14A2
+	call	l141c	; 14A4
+	jmps	l1499	; 14A7
+
+l14a9:	; branch target
+	mov	cl,0dh	; 14A9
+	call	l141c	; 14AB
+	mov	cl,0ah	; 14AE
+	jmp	l141c	; 14B0
+
+l14b3:	; branch target
+	mov	si,cx	; 14B3
+	lodsb	; 14B5
+	cmp	al,24h	; 14B6
+	jz	l1483	; 14B8
+	inc	cx	; 14BA
+	push	cx	; 14BB
+	mov	cl,al	; 14BC
+	push	ds	; 14BE
+	push	ss	; 14BF
+	pop	ds	; 14C0
+	call	l1472	; 14C1
+	pop	ds	; 14C4
+	pop	cx	; 14C5
+	jmps	l14b3	; 14C6
+
+l14c8:	; branch target
+	mov	al,.22e5h	; 14C8
+	mov	.22e4h,al	; 14CB
+	mov	bx,.2499h	; 14CE
+	mov	cl,es:[bx]	; 14D2
+	inc	bx	; 14D5
+	push	bx	; 14D6
+	mov	ch,00h	; 14D7
+
+l14d9:	; branch target
+	push	cx	; 14D9
+	push	bx	; 14DA
+
+l14db:	; branch target
+	call	l139a	; 14DB
+	pop	bx	; 14DE
+	pop	cx	; 14DF
+	cmp	al,0dh	; 14E0
+	jnz	l14e7	; 14E2
+
+l14e4:	; branch target
+	jmp	l15ad	; 14E4
+
+l14e7:	; branch target
+	cmp	al,0ah	; 14E7
+	jz	l14e4	; 14E9
+	cmp	al,08h	; 14EB
+	jnz	l14fd	; 14ED
+	or	ch,ch	; 14EF
+	jz	l14d9	; 14F1
+	dec	ch	; 14F3
+	mov	al,.22e5h	; 14F5
+	mov	.22e3h,al	; 14F8
+	jmps	l154e	; 14FB
+
+l14fd:	; branch target
+	cmp	al,7fh	; 14FD
+	jnz	l150d	; 14FF
+	or	ch,ch	; 1501
+	jz	l14d9	; 1503
+	mov	al,es:[bx]	; 1505
+	dec	ch	; 1508
+	dec	bx	; 150A
+	jmps	l1589	; 150B
+
+l150d:	; branch target
+	cmp	al,05h	; 150D
+	jnz	l151d	; 150F
+	push	cx	; 1511
+	push	bx	; 1512
+	call	l14a9	; 1513
+	mov	byte ptr .22e4h,00h	; 1516
+
+l151b:	; branch target
+	jmps	l14db	; 151B
+
+l151d:	; branch target
+	cmp	al,10h	; 151D
+	jnz	l1527	; 151F
+	not	byte ptr .24b6h	; 1521
+	jmps	l14d9	; 1525
+
+l1527:	; branch target
+	cmp	al,18h	; 1527
+	jnz	l153f	; 1529
+	pop	bx	; 152B
+
+l152c:	; branch target
+	mov	al,.22e4h	; 152C
+	mov	bx,22e5h	; 152F
+	nop	; 1532
+	cmp	al,[bx]	; 1533
+	jnc	l14c8	; 1535
+	nop	; 1537
+	dec	byte ptr [bx]	; 1538
+	call	l1484	; 153A
+	jmps	l152c	; 153D
+
+l153f:	; branch target
+	cmp	al,15h	; 153F
+	jnz	l154a	; 1541
+	call	l1491	; 1543
+	pop	bx	; 1546
+	jmp	l14c8	; 1547
+
+l154a:	; branch target
+	cmp	al,12h	; 154A
+	jnz	l1583	; 154C
+
+l154e:	; branch target
+	push	cx	; 154E
+	call	l1491	; 154F
+	pop	cx	; 1552
+	pop	bx	; 1553
+	push	bx	; 1554
+	push	cx	; 1555
+
+l1556:	; branch target
+	or	ch,ch	; 1556
+	jz	l1569	; 1558
+	inc	bx	; 155A
+	mov	cl,es:[bx]	; 155B
+	dec	ch	; 155E
+	push	cx	; 1560
+	push	bx	; 1561
+	call	l1461	; 1562
+	pop	bx	; 1565
+	pop	cx	; 1566
+	jmps	l1556	; 1567
+
+l1569:	; branch target
+	push	bx	; 1569
+	mov	al,.22e3h	; 156A
+	or	al,al	; 156D
+	jz	l1581	; 156F
+	sub	al,.22e5h	; 1571
+	mov	.22e3h,al	; 1575
+
+l1578:	; branch target
+	call	l1484	; 1578
+	dec	byte ptr .22e3h	; 157B
+	jnz	l1578	; 157F
+
+l1581:	; branch target
+	jmps	l151b	; 1581
+
+l1583:	; branch target
+	inc	bx	; 1583
+	mov	es:[bx],al	; 1584
+	inc	ch	; 1587
+
+l1589:	; branch target
+	push	cx	; 1589
+	push	bx	; 158A
+	mov	cl,al	; 158B
+	call	l1461	; 158D
+	pop	bx	; 1590
+	pop	cx	; 1591
+	mov	al,es:[bx]	; 1592
+	cmp	al,03h	; 1595
+	mov	al,ch	; 1597
+	jnz	l15a6	; 1599
+	cmp	al,01h	; 159B
+	jnz	l15a6	; 159D
+	mov	ax,ds	; 159F
+	mov	es,ax	; 15A1
+	jmp	l13eb	; 15A3
+
+l15a6:	; branch target
+	cmp	al,cl	; 15A6
+	jnc	l15ad	; 15A8
+	jmp	l14d9	; 15AA
+
+l15ad:	; branch target
+	pop	bx	; 15AD
+	mov	es:[bx],ch	; 15AE
+	mov	cl,0dh	; 15B1
+	mov	ax,ds	; 15B3
+	mov	es,ax	; 15B5
+	jmp	l141c	; 15B7
+	call	l13a9	; 15BA
+	jmps	l1603	; 15BD
+	call	l2515	; 15BF
+	jmps	l1603	; 15C2
+	mov	al,cl	; 15C4
+	inc	al	; 15C6
+	jz	l15d3	; 15C8
+	inc	al	; 15CA
+	jnz	l161a	; 15CC
+	call	l1615	; 15CE
+	jmps	l1603	; 15D1
+
+l15d3:	; branch target
+	call	l1615	; 15D3
+	or	al,al	; 15D6
+	jnz	l15dd	; 15D8
+	jmp	l21c3	; 15DA
+
+l15dd:	; branch target
+	call	l1610	; 15DD
+	jmps	l1603	; 15E0
+	call	l2539	; 15E2
+	jmps	l1603	; 15E5
+	mov	cx,dx	; 15E7
+	call	l253c	; 15E9
+	ret	; 15EC
+	mov	cx,dx	; 15ED
+	push	ds	; 15EF
+	mov	ds,word ptr .249dh	; 15F0
+	call	l14b3	; 15F4
+	pop	ds	; 15F7
+	ret	; 15F8
+	mov	es,word ptr .249dh	; 15F9
+	jmp	l14c8	; 15FD
+	call	l13cc	; 1600
+
+l1603:	; branch target
+	mov	.249bh,al	; 1603
+	ret	; 1606
+
+l1607:	; branch target
+	mov	al,01h	; 1607
+	jmps	l1603	; 1609
+
+l160b:	; branch target
+	mov	bx,250fh	; 160B
+	jmps	l161d	; 160E
+
+l1610:	; branch target
+	mov	bx,2509h	; 1610
+	jmps	l161d	; 1613
+
+l1615:	; branch target
+	mov	bx,2506h	; 1615
+	jmps	l161d	; 1618
+
+l161a:	; branch target
+	mov	bx,250ch	; 161A
+
+l161d:	; branch target
+	callf	dword ptr .2200h	; 161D
+	ret	; 1621
+	call	bx	; 1622
+	retf	; 1624
+
+l1625:	; branch target
+	mov	bx,2206h	; 1625
+
+l1628:	; branch target
+	jmp	word ptr [bx]	; 1628
+
+l162a:	; branch target
+	push	cx	; 162A
+	mov	ch,00h	; 162B
+	mov	si,dx	; 162D
+	mov	di,bx	; 162F
+	cld	; 1631
+	rep	movsb	; 1632
+	pop	cx	; 1634
+	ret	; 1635
+
+l1636:	; branch target
+	mov	cl,.24a4h	; 1636
+	call	l251b	; 163A
+	cmp	bx,00h	; 163D
+	jz	l1692	; 1640
+	mov	dx,[bx]	; 1642
+	add	bx,02h	; 1644
+	mov	.22ech,bx	; 1647
+	add	bx,02h	; 164B
+	mov	.22eeh,bx	; 164E
+	add	bx,02h	; 1652
+	mov	.22f0h,bx	; 1655
+	add	bx,02h	; 1659
+	xchg	bx,dx	; 165C
+	mov	.2309h,bx	; 165E
+	mov	bx,.22f2h	; 1662
+	mov	.24adh,bx	; 1666
+	mov	bx,22f2h	; 166A
+	mov	cl,08h	; 166D
+	call	l162a	; 166F
+	mov	dx,.22f4h	; 1672
+	mov	bx,22fah	; 1676
+	mov	cl,0fh	; 1679
+	call	l162a	; 167B
+	mov	al,.2300h	; 167E
+	mov	bx,2312h	; 1681
+	mov	byte ptr [bx],0ffh	; 1684
+	or	al,al	; 1687
+	jz	l168e	; 1689
+	mov	byte ptr [bx],00h	; 168B
+
+l168e:	; branch target
+	mov	al,0ffh	; 168E
+	or	al,al	; 1690
+
+l1692:	; branch target
+	ret	; 1692
+
+l1693:	; branch target
+	call	l2518	; 1693
+	xor	ax,ax	; 1696
+	mov	bx,.22eeh	; 1698
+	mov	[bx],ax	; 169C
+	ret	; 169E
+
+l169f:	; branch target
+	mov	dx,.231ah	; 169F
+	call	l2527	; 16A3
+	jmps	l16af	; 16A6
+
+l16a8:	; branch target
+	mov	cl,.230dh	; 16A8
+
+l16ac:	; branch target
+	call	l252a	; 16AC
+
+l16af:	; branch target
+	or	al,al	; 16AF
+	jz	l1692	; 16B1
+	mov	bx,2204h	; 16B3
+	jmp	l1628	; 16B6
+
+l16b9:	; branch target
+	mov	bx,.24a6h	; 16B9
+	mov	cl,02h	; 16BD
+	shr	bx,cl	; 16BF
+	mov	.231ah,bx	; 16C1
+	mov	.231fh,bx	; 16C5
+
+l16c9:	; branch target
+	mov	ax,.231ah	; 16C9
+	mov	dx,00h	; 16CC
+	div	word ptr .22fah	; 16CF
+	push	dx	; 16D3
+	mov	cx,ax	; 16D4
+	mov	si,.22eeh	; 16D6
+	mov	[si],cx	; 16DA
+	add	cx,.2307h	; 16DC
+	call	l251e	; 16E0
+	pop	cx	; 16E3
+	mov	dx,.2309h	; 16E4
+	call	l2530	; 16E8
+	mov	cx,bx	; 16EB
+	jmp	l2521	; 16ED
+
+l16f0:	; branch target
+	mov	bx,22fch	; 16F0
+	mov	cl,[bx]	; 16F3
+	mov	al,.2318h	; 16F5
+	shr	al,cl	; 16F8
+	mov	ch,al	; 16FA
+	mov	cl,07h	; 16FC
+	sub	cl,[bx]	; 16FE
+	mov	al,.2317h	; 1700
+	shl	al,cl	; 1703
+	add	al,ch	; 1705
+	ret	; 1707
+
+l1708:	; branch target
+	mov	bx,.2499h	; 1708
+	add	bx,10h	; 170C
+	add	bx,cx	; 170F
+	cmp	byte ptr .2312h,00h	; 1711
+	jz	l171d	; 1716
+	mov	bl,[bx]	; 1718
+	mov	bh,00h	; 171A
+	ret	; 171C
+
+l171d:	; branch target
+	add	bx,cx	; 171D
+	mov	bx,[bx]	; 171F
+	ret	; 1721
+
+l1722:	; branch target
+	call	l16f0	; 1722
+	mov	cl,al	; 1725
+	mov	ch,00h	; 1727
+	call	l1708	; 1729
+	mov	.231ah,bx	; 172C
+	ret	; 1730
+
+l1731:	; branch target
+	mov	bx,.231ah	; 1731
+	or	bx,bx	; 1735
+	ret	; 1737
+
+l1738:	; branch target
+	mov	cl,.22fch	; 1738
+	mov	bx,.231ah	; 173C
+	shl	bx,cl	; 1740
+	mov	.231ch,bx	; 1742
+	mov	al,.2318h	; 1746
+	and	al,.22fdh	; 1749
+	or	bl,al	; 174D
+	mov	.231ah,bx	; 174F
+	ret	; 1753
+
+l1754:	; branch target
+	mov	bx,.2499h	; 1754
+	add	bx,0ch	; 1758
+	mov	al,[bx]	; 175B
+	ret	; 175D
+
+l175e:	; branch target
+	mov	dx,0fh	; 175E
+	add	dx,.2499h	; 1761
+	mov	bx,11h	; 1765
+	add	bx,dx	; 1768
+	ret	; 176A
+
+l176b:	; branch target
+	call	l175e	; 176B
+	mov	al,[bx]	; 176E
+	mov	.2318h,al	; 1770
+	xchg	bx,dx	; 1773
+	mov	al,[bx]	; 1775
+	mov	.2316h,al	; 1777
+	call	l1754	; 177A
+	mov	al,.22feh	; 177D
+	and	al,[bx]	; 1780
+	mov	.2317h,al	; 1782
+	ret	; 1785
+
+l1786:	; branch target
+	call	l175e	; 1786
+	mov	al,.230fh	; 1789
+	cmp	al,02h	; 178C
+	jnz	l1792	; 178E
+	xor	al,al	; 1790
+
+l1792:	; branch target
+	add	al,.2318h	; 1792
+	mov	[bx],al	; 1796
+	xchg	bx,dx	; 1798
+	mov	al,.2316h	; 179A
+	mov	[bx],al	; 179D
+	ret	; 179F
+
+l17a0:	; branch target
+	mov	cx,80h	; 17A0
+	mov	bx,.22f2h	; 17A3
+	xor	al,al	; 17A7
+
+l17a9:	; branch target
+	add	al,[bx]	; 17A9
+	inc	bx	; 17AB
+	loop	l17a9	; 17AC
+	ret	; 17AE
+
+l17af:	; branch target
+	push	cx	; 17AF
+	mov	cl,.24a4h	; 17B0
+	mov	bx,01h	; 17B4
+	shl	bx,cl	; 17B7
+	pop	cx	; 17B9
+	or	bx,cx	; 17BA
+	ret	; 17BC
+
+l17bd:	; branch target
+	mov	ax,.22e8h	; 17BD
+	mov	cl,.24a4h	; 17C0
+	shr	ax,cl	; 17C4
+	and	al,01h	; 17C6
+	ret	; 17C8
+
+l17c9:	; branch target
+	mov	cx,.22e8h	; 17C9
+	call	l17af	; 17CD
+	mov	.22e8h,bx	; 17D0
+	mov	dx,.2301h	; 17D4
+	inc	dx	; 17D8
+	mov	bx,.22ech	; 17D9
+	mov	[bx],dx	; 17DD
+	ret	; 17DF
+
+l17e0:	; branch target
+	call	l17fe	; 17E0
+
+l17e3:	; branch target
+	mov	dx,09h	; 17E3
+	add	bx,dx	; 17E6
+	mov	al,[bx]	; 17E8
+	rcl	al,1	; 17EA
+	jnc	l1809	; 17EC
+	mov	bx,220ah	; 17EE
+	jmps	l17fb	; 17F1
+
+l17f3:	; branch target
+	call	l17bd	; 17F3
+	jz	l1809	; 17F6
+	mov	bx,2208h	; 17F8
+
+l17fb:	; branch target
+	jmp	l1628	; 17FB
+
+l17fe:	; branch target
+	mov	bx,.22f2h	; 17FE
+	mov	al,.231eh	; 1802
+	mov	ah,00h	; 1805
+	add	bx,ax	; 1807
+
+l1809:	; branch target
+	ret	; 1809
+
+l180a:	; branch target
+	mov	bx,.2499h	; 180A
+	add	bx,0eh	; 180E
+	mov	al,[bx]	; 1811
+	ret	; 1813
+
+l1814:	; branch target
+	call	l180a	; 1814
+	mov	byte ptr [bx],00h	; 1817
+	ret	; 181A
+
+l181b:	; branch target
+	call	l180a	; 181B
+	or	al,80h	; 181E
+	mov	[bx],al	; 1820
+	ret	; 1822
+
+l1823:	; branch target
+	mov	dx,.24a6h	; 1823
+	mov	bx,.22ech	; 1827
+	cmp	dx,[bx]	; 182B
+
+l182d:	; branch target
+	ret	; 182D
+
+l182e:	; branch target
+	call	l1823	; 182E
+	jc	l182d	; 1831
+	inc	dx	; 1833
+	mov	[bx],dx	; 1834
+	ret	; 1836
+
+l1837:	; branch target
+	push	dx	; 1837
+	sub	dx,bx	; 1838
+	mov	bx,dx	; 183A
+	pop	dx	; 183C
+	ret	; 183D
+
+l183e:	; branch target
+	mov	cl,0ffh	; 183E
+
+l1840:	; branch target
+	mov	dx,.231fh	; 1840
+	mov	bx,.2305h	; 1844
+	call	l1837	; 1848
+	jnc	l182d	; 184B
+	push	cx	; 184D
+	call	l17a0	; 184E
+	mov	bx,.231fh	; 1851
+	add	bx,.22f6h	; 1855
+	pop	cx	; 1859
+	inc	cl	; 185A
+	jz	l186b	; 185C
+	cmp	al,[bx]	; 185E
+	jz	l186d	; 1860
+	call	l1823	; 1862
+	jnc	l186d	; 1865
+	call	l17c9	; 1867
+	ret	; 186A
+
+l186b:	; branch target
+	mov	[bx],al	; 186B
+
+l186d:	; branch target
+	ret	; 186D
+
+l186e:	; branch target
+	call	l183e	; 186E
+	call	l188d	; 1871
+	mov	cl,01h	; 1874
+	call	l16ac	; 1876
+	jmps	l1881	; 1879
+
+l187b:	; branch target
+	call	l188d	; 187B
+	call	l169f	; 187E
+
+l1881:	; branch target
+	mov	cx,.24a2h	; 1881
+	call	l2533	; 1885
+	mov	bx,24a0h	; 1888
+	jmps	l1895	; 188B
+
+l188d:	; branch target
+	mov	cx,ds	; 188D
+	call	l2533	; 188F
+	mov	bx,22f2h	; 1892
+
+l1895:	; branch target
+	mov	cx,[bx]	; 1895
+	jmp	l2524	; 1897
+
+l189a:	; branch target
+	mov	dx,.22f2h	; 189A
+	mov	bx,.24a0h	; 189E
+	mov	cl,80h	; 18A2
+	push	es	; 18A4
+	mov	es,word ptr .24a2h	; 18A5
+	call	l162a	; 18A9
+	pop	es	; 18AC
+	ret	; 18AD
+
+l18ae:	; branch target
+	mov	bx,24a6h	; 18AE
+	mov	al,[bx]	; 18B1
+	inc	bx	; 18B3
+	cmp	al,[bx]	; 18B4
+	jnz	l18ba	; 18B6
+	inc	al	; 18B8
+
+l18ba:	; branch target
+	ret	; 18BA
+
+l18bb:	; branch target
+	mov	bx,0ffffh	; 18BB
+	mov	.24a6h,bx	; 18BE
+	ret	; 18C2
+
+l18c3:	; branch target
+	mov	dx,.2301h	; 18C3
+	mov	bx,.24a6h	; 18C7
+	inc	bx	; 18CB
+	mov	.24a6h,bx	; 18CC
+	call	l1837	; 18D0
+	jnc	l18d7	; 18D3
+	jmps	l18bb	; 18D5
+
+l18d7:	; branch target
+	mov	al,.24a6h	; 18D7
+	and	al,03h	; 18DA
+	push	cx	; 18DC
+	mov	cl,05h	; 18DD
+	shl	al,cl	; 18DF
+	pop	cx	; 18E1
+	mov	.231eh,al	; 18E2
+	or	al,al	; 18E5
+	jnz	l190f	; 18E7
+	push	cx	; 18E9
+	call	l16b9	; 18EA
+	call	l187b	; 18ED
+	pop	cx	; 18F0
+	jmp	l1840	; 18F1
+
+l18f4:	; branch target
+	mov	dx,cx	; 18F4
+	and	cl,07h	; 18F6
+	inc	cl	; 18F9
+	mov	ch,cl	; 18FB
+	mov	cl,03h	; 18FD
+	shr	dx,cl	; 18FF
+	mov	bx,.22f8h	; 1901
+	add	bx,dx	; 1905
+	mov	al,[bx]	; 1907
+	mov	cl,ch	; 1909
+	rol	al,cl	; 190B
+	mov	dx,cx	; 190D
+
+l190f:	; branch target
+	ret	; 190F
+
+l1910:	; branch target
+	push	dx	; 1910
+	call	l18f4	; 1911
+	and	al,0feh	; 1914
+	pop	cx	; 1916
+	or	al,cl	; 1917
+
+l1919:	; branch target
+	push	cx	; 1919
+	mov	cl,dh	; 191A
+	ror	al,cl	; 191C
+	mov	[bx],al	; 191E
+	pop	cx	; 1920
+	ret	; 1921
+
+l1922:	; branch target
+	call	l17fe	; 1922
+	add	bx,10h	; 1925
+	push	cx	; 1928
+	mov	cl,11h	; 1929
+
+l192b:	; branch target
+	pop	dx	; 192B
+	dec	cl	; 192C
+	jnz	l1931	; 192E
+	ret	; 1930
+
+l1931:	; branch target
+	push	dx	; 1931
+	cmp	byte ptr .2312h,00h	; 1932
+	jz	l1941	; 1937
+	push	cx	; 1939
+	push	bx	; 193A
+	mov	cl,[bx]	; 193B
+	mov	ch,00h	; 193D
+	jmps	l1948	; 193F
+
+l1941:	; branch target
+	dec	cl	; 1941
+	push	cx	; 1943
+	mov	cx,[bx]	; 1944
+	inc	bx	; 1946
+	push	bx	; 1947
+
+l1948:	; branch target
+	or	cx,cx	; 1948
+	jz	l1957	; 194A
+	mov	bx,.22ffh	; 194C
+	cmp	bx,cx	; 1950
+	jc	l1957	; 1952
+	call	l1910	; 1954
+
+l1957:	; branch target
+	pop	bx	; 1957
+	inc	bx	; 1958
+	pop	cx	; 1959
+	jmps	l192b	; 195A
+
+l195c:	; branch target
+	mov	bx,.22ffh	; 195C
+	mov	cl,03h	; 1960
+	shr	bx,cl	; 1962
+	inc	bx	; 1964
+	mov	cx,bx	; 1965
+	mov	bx,.22f8h	; 1967
+
+l196b:	; branch target
+	mov	byte ptr [bx],00h	; 196B
+	inc	bx	; 196E
+	loop	l196b	; 196F
+	mov	dx,.2303h	; 1971
+	mov	bx,.22f8h	; 1975
+	mov	[bx],dx	; 1979
+	call	l1693	; 197B
+	mov	bx,.22ech	; 197E
+	mov	word ptr [bx],03h	; 1982
+	call	l18bb	; 1986
+
+l1989:	; branch target
+	mov	cl,0ffh	; 1989
+	call	l18c3	; 198B
+	call	l18ae	; 198E
+	jz	l19ce	; 1991
+	call	l17fe	; 1993
+	cmp	byte ptr [bx],0e5h	; 1996
+	jz	l1989	; 1999
+	mov	al,.24a5h	; 199B
+	cmp	al,[bx]	; 199E
+	jnz	l19ae	; 19A0
+	inc	bx	; 19A2
+	mov	al,[bx]	; 19A3
+	sub	al,24h	; 19A5
+	jnz	l19ae	; 19A7
+	dec	al	; 19A9
+	mov	.249bh,al	; 19AB
+
+l19ae:	; branch target
+	mov	cl,01h	; 19AE
+	call	l1922	; 19B0
+	call	l182e	; 19B3
+	jmps	l1989	; 19B6
+
+l19b8:	; branch target
+	mov	al,.230eh	; 19B8
+	jmp	l1603	; 19BB
+
+l19be:	; branch target
+	push	cx	; 19BE
+	mov	ch,.22feh	; 19BF
+	not	ch	; 19C3
+	and	cl,ch	; 19C5
+	and	al,ch	; 19C7
+	sub	al,cl	; 19C9
+	and	al,1fh	; 19CB
+	pop	cx	; 19CD
+
+l19ce:	; branch target
+	ret	; 19CE
+
+l19cf:	; branch target
+	mov	bx,.2499h	; 19CF
+	mov	.2321h,bx	; 19D3
+	mov	byte ptr .230eh,0ffh	; 19D7
+	mov	.24a8h,cl	; 19DC
+	ret	; 19E0
+
+l19e1:	; branch target
+	call	l19cf	; 19E1
+	call	l18bb	; 19E4
+	call	l1693	; 19E7
+
+l19ea:	; branch target
+	mov	byte ptr .239ah,00h	; 19EA
+	mov	cl,00h	; 19EF
+	call	l18c3	; 19F1
+	call	l18ae	; 19F4
+	jnz	l19fc	; 19F7
+
+l19f9:	; branch target
+	jmp	l1a7c	; 19F9
+
+l19fc:	; branch target
+	mov	dx,.2321h	; 19FC
+	mov	si,dx	; 1A00
+	lodsb	; 1A02
+	cmp	al,0e5h	; 1A03
+	jz	l1a0e	; 1A05
+	push	dx	; 1A07
+	call	l1823	; 1A08
+	pop	dx	; 1A0B
+	jnc	l19f9	; 1A0C
+
+l1a0e:	; branch target
+	call	l17fe	; 1A0E
+	mov	cl,.24a8h	; 1A11
+	mov	ch,00h	; 1A15
+
+l1a17:	; branch target
+	or	cl,cl	; 1A17
+	jz	l1a53	; 1A19
+	mov	si,dx	; 1A1B
+	lodsb	; 1A1D
+	cmp	al,3fh	; 1A1E
+	jz	l1a4b	; 1A20
+	cmp	ch,0dh	; 1A22
+	jz	l1a4b	; 1A25
+	cmp	ch,0ch	; 1A27
+	jz	l1a34	; 1A2A
+	sub	al,[bx]	; 1A2C
+	and	al,7fh	; 1A2E
+	jnz	l1a65	; 1A30
+	jmps	l1a4b	; 1A32
+
+l1a34:	; branch target
+	push	cx	; 1A34
+	mov	cl,[bx]	; 1A35
+	call	l19be	; 1A37
+	pop	cx	; 1A3A
+	lahf	; 1A3B
+	test	byte ptr .239ah,0ffh	; 1A3C
+	jnz	l1a88	; 1A41
+	mov	byte ptr .2397h,00h	; 1A43
+	sahf	; 1A48
+	jnz	l19ea	; 1A49
+
+l1a4b:	; branch target
+	inc	dx	; 1A4B
+	inc	bx	; 1A4C
+	inc	ch	; 1A4D
+	dec	cl	; 1A4F
+	jmps	l1a17	; 1A51
+
+l1a53:	; branch target
+	mov	byte ptr .230eh,00h	; 1A53
+	mov	al,.24a6h	; 1A58
+	and	al,03h	; 1A5B
+	mov	.249bh,al	; 1A5D
+	mov	ch,al	; 1A60
+	inc	ch	; 1A62
+
+l1a64:	; branch target
+	ret	; 1A64
+
+l1a65:	; branch target
+	or	ch,ch	; 1A65
+	jnz	l1a99	; 1A67
+	test	byte ptr [bx],0ffh	; 1A69
+	jnz	l1a99	; 1A6C
+	test	byte ptr .2397h,0ffh	; 1A6E
+	jz	l1a99	; 1A73
+	mov	byte ptr .239ah,0ffh	; 1A75
+	jmps	l1a4b	; 1A7A
+
+l1a7c:	; branch target
+	call	l18bb	; 1A7C
+	mov	al,0ffh	; 1A7F
+	mov	ch,al	; 1A81
+	inc	ch	; 1A83
+	jmp	l1603	; 1A85
+
+l1a88:	; branch target
+	sahf	; 1A88
+	jnz	l1a99	; 1A89
+	inc	bx	; 1A8B
+	cmp	byte ptr [bx],00h	; 1A8C
+	jnz	l1a99	; 1A8F
+	mov	si,.24a6h	; 1A91
+	mov	.2398h,si	; 1A95
+
+l1a99:	; branch target
+	jmp	l19ea	; 1A99
+
+l1a9c:	; branch target
+	call	l17f3	; 1A9C
+	mov	cl,0ch	; 1A9F
+	call	l19e1	; 1AA1
+
+l1aa4:	; branch target
+	call	l18ae	; 1AA4
+	jz	l1a64	; 1AA7
+	call	l17e0	; 1AA9
+	call	l17fe	; 1AAC
+	mov	byte ptr [bx],0e5h	; 1AAF
+	mov	cl,00h	; 1AB2
+	call	l1922	; 1AB4
+	call	l186e	; 1AB7
+	call	l19ea	; 1ABA
+	jmps	l1aa4	; 1ABD
+
+l1abf:	; branch target
+	mov	dx,cx	; 1ABF
+
+l1ac1:	; branch target
+	or	cx,cx	; 1AC1
+	jz	l1ad1	; 1AC3
+	dec	cx	; 1AC5
+	push	dx	; 1AC6
+	push	cx	; 1AC7
+	call	l18f4	; 1AC8
+	rcr	al,1	; 1ACB
+	jnc	l1ae7	; 1ACD
+	pop	cx	; 1ACF
+	pop	dx	; 1AD0
+
+l1ad1:	; branch target
+	cmp	dx,.22ffh	; 1AD1
+	jnc	l1af1	; 1AD5
+	inc	dx	; 1AD7
+	push	cx	; 1AD8
+	push	dx	; 1AD9
+	mov	cx,dx	; 1ADA
+	call	l18f4	; 1ADC
+	rcr	al,1	; 1ADF
+	jnc	l1ae7	; 1AE1
+	pop	dx	; 1AE3
+	pop	cx	; 1AE4
+	jmps	l1ac1	; 1AE5
+
+l1ae7:	; branch target
+	rcl	al,1	; 1AE7
+	inc	al	; 1AE9
+	call	l1919	; 1AEB
+	pop	bx	; 1AEE
+	pop	dx	; 1AEF
+	ret	; 1AF0
+
+l1af1:	; branch target
+	or	cx,cx	; 1AF1
+	jnz	l1ac1	; 1AF3
+	mov	bx,00h	; 1AF5
+	ret	; 1AF8
+
+l1af9:	; branch target
+	mov	cl,00h	; 1AF9
+	mov	dl,20h	; 1AFB
+
+l1afd:	; branch target
+	push	dx	; 1AFD
+	mov	ch,00h	; 1AFE
+	mov	dx,.2499h	; 1B00
+	add	dx,cx	; 1B04
+	call	l17fe	; 1B06
+	pop	cx	; 1B09
+	call	l162a	; 1B0A
+
+l1b0d:	; branch target
+	call	l16b9	; 1B0D
+	jmp	l186e	; 1B10
+
+l1b13:	; branch target
+	call	l17f3	; 1B13
+	mov	cl,0ch	; 1B16
+	call	l19e1	; 1B18
+	mov	bx,.2499h	; 1B1B
+	mov	al,[bx]	; 1B1F
+	add	bx,10h	; 1B21
+	mov	[bx],al	; 1B24
+
+l1b26:	; branch target
+	call	l18ae	; 1B26
+	jnz	l1b2c	; 1B29
+
+l1b2b:	; branch target
+	ret	; 1B2B
+
+l1b2c:	; branch target
+	call	l17e0	; 1B2C
+	mov	cl,10h	; 1B2F
+	mov	dl,0ch	; 1B31
+	call	l1afd	; 1B33
+	call	l19ea	; 1B36
+	jmps	l1b26	; 1B39
+
+l1b3b:	; branch target
+	mov	cl,0ch	; 1B3B
+	call	l19e1	; 1B3D
+
+l1b40:	; branch target
+	call	l18ae	; 1B40
+	jz	l1b2b	; 1B43
+	mov	cl,00h	; 1B45
+	mov	dl,0ch	; 1B47
+	call	l1afd	; 1B49
+	call	l19ea	; 1B4C
+	jmps	l1b40	; 1B4F
+
+l1b51:	; branch target
+	mov	cl,0fh	; 1B51
+	call	l19e1	; 1B53
+	call	l18ae	; 1B56
+
+l1b59:	; branch target
+	jz	l1b2b	; 1B59
+
+l1b5b:	; branch target
+	call	l1754	; 1B5B
+	push	ax	; 1B5E
+	push	bx	; 1B5F
+	call	l17fe	; 1B60
+	xchg	bx,dx	; 1B63
+	mov	bx,.2499h	; 1B65
+	mov	cl,20h	; 1B69
+	push	dx	; 1B6B
+	call	l162a	; 1B6C
+	call	l181b	; 1B6F
+	pop	dx	; 1B72
+	mov	bx,0ch	; 1B73
+	add	bx,dx	; 1B76
+	mov	cl,[bx]	; 1B78
+	mov	bx,0fh	; 1B7A
+	add	bx,dx	; 1B7D
+	mov	ch,[bx]	; 1B7F
+	pop	bx	; 1B81
+	pop	ax	; 1B82
+	mov	[bx],al	; 1B83
+	cmp	cl,[bx]	; 1B85
+	mov	al,ch	; 1B87
+	jz	l1b91	; 1B89
+	mov	al,00h	; 1B8B
+	jc	l1b91	; 1B8D
+	mov	al,80h	; 1B8F
+
+l1b91:	; branch target
+	mov	bx,.2499h	; 1B91
+	mov	dx,0fh	; 1B95
+	add	bx,dx	; 1B98
+	mov	[bx],al	; 1B9A
+
+l1b9c:	; branch target
+	ret	; 1B9C
+
+l1b9d:	; branch target
+	cmp	word ptr [bx],00h	; 1B9D
+	jnz	l1b9c	; 1BA0
+	mov	si,dx	; 1BA2
+	lodsw	; 1BA4
+	mov	[bx],ax	; 1BA5
+
+l1ba7:	; branch target
+	ret	; 1BA7
+
+l1ba8:	; branch target
+	xor	ax,ax	; 1BA8
+	mov	.249bh,al	; 1BAA
+	mov	.24a6h,ax	; 1BAD
+	call	l17bd	; 1BB0
+	jnz	l1ba7	; 1BB3
+	call	l180a	; 1BB5
+	and	al,80h	; 1BB8
+	jnz	l1ba7	; 1BBA
+	mov	cl,0fh	; 1BBC
+	call	l19e1	; 1BBE
+	call	l18ae	; 1BC1
+	jz	l1ba7	; 1BC4
+	mov	cx,10h	; 1BC6
+	call	l17fe	; 1BC9
+	add	bx,cx	; 1BCC
+	xchg	bx,dx	; 1BCE
+	mov	bx,.2499h	; 1BD0
+	add	bx,cx	; 1BD4
+	mov	cl,10h	; 1BD6
+
+l1bd8:	; branch target
+	cmp	byte ptr .2312h,00h	; 1BD8
+	jz	l1bfa	; 1BDD
+	mov	al,[bx]	; 1BDF
+	or	al,al	; 1BE1
+	mov	si,dx	; 1BE3
+	lodsb	; 1BE5
+	jnz	l1bea	; 1BE6
+	mov	[bx],al	; 1BE8
+
+l1bea:	; branch target
+	or	al,al	; 1BEA
+	jnz	l1bf4	; 1BEC
+	mov	al,[bx]	; 1BEE
+	mov	di,dx	; 1BF0
+	cld	; 1BF2
+	stosb	; 1BF3
+
+l1bf4:	; branch target
+	cmp	al,[bx]	; 1BF4
+	jnz	l1c3f	; 1BF6
+	jmps	l1c10	; 1BF8
+
+l1bfa:	; branch target
+	call	l1b9d	; 1BFA
+	xchg	bx,dx	; 1BFD
+	call	l1b9d	; 1BFF
+	xchg	bx,dx	; 1C02
+	mov	si,dx	; 1C04
+	mov	ax,[si]	; 1C06
+	cmp	ax,[bx]	; 1C08
+	jnz	l1c3f	; 1C0A
+	inc	dx	; 1C0C
+	inc	bx	; 1C0D
+	dec	cl	; 1C0E
+
+l1c10:	; branch target
+	inc	dx	; 1C10
+	inc	bx	; 1C11
+	dec	cl	; 1C12
+	jnz	l1bd8	; 1C14
+	mov	cx,0ffech	; 1C16
+	add	bx,cx	; 1C19
+	xchg	bx,dx	; 1C1B
+	add	bx,cx	; 1C1D
+	mov	si,dx	; 1C1F
+	lodsb	; 1C21
+	cmp	al,[bx]	; 1C22
+	jc	l1c37	; 1C24
+	mov	[bx],al	; 1C26
+	mov	cx,03h	; 1C28
+	add	bx,cx	; 1C2B
+	xchg	bx,dx	; 1C2D
+	add	bx,cx	; 1C2F
+	mov	al,[bx]	; 1C31
+	mov	di,dx	; 1C33
+	cld	; 1C35
+	stosb	; 1C36
+
+l1c37:	; branch target
+	mov	byte ptr .230bh,0ffh	; 1C37
+	jmp	l1b0d	; 1C3C
+
+l1c3f:	; branch target
+	dec	byte ptr .249bh	; 1C3F
+
+l1c43:	; branch target
+	ret	; 1C43
+
+l1c44:	; branch target
+	call	l17f3	; 1C44
+	push	word ptr .2499h	; 1C47
+	mov	word ptr .2499h,22e7h	; 1C4B
+	mov	cl,01h	; 1C51
+	call	l19e1	; 1C53
+	call	l18ae	; 1C56
+	pop	word ptr .2499h	; 1C59
+	jz	l1c43	; 1C5D
+	mov	dx,.2499h	; 1C5F
+	mov	bx,0fh	; 1C63
+	add	bx,dx	; 1C66
+	mov	cl,11h	; 1C68
+	xor	al,al	; 1C6A
+
+l1c6c:	; branch target
+	mov	[bx],al	; 1C6C
+	inc	bx	; 1C6E
+	dec	cl	; 1C6F
+	jnz	l1c6c	; 1C71
+	mov	bx,0dh	; 1C73
+	add	bx,dx	; 1C76
+	mov	[bx],al	; 1C78
+	call	l182e	; 1C7A
+	call	l1af9	; 1C7D
+	jmp	l181b	; 1C80
+
+l1c83:	; branch target
+	xor	al,al	; 1C83
+	mov	.230bh,al	; 1C85
+	call	l1ba8	; 1C88
+	call	l18ae	; 1C8B
+	jz	l1c43	; 1C8E
+	mov	bx,.2499h	; 1C90
+	add	bx,0ch	; 1C94
+	mov	al,[bx]	; 1C97
+	inc	al	; 1C99
+	and	al,1fh	; 1C9B
+	mov	[bx],al	; 1C9D
+	jz	l1cb0	; 1C9F
+	mov	ch,al	; 1CA1
+	mov	al,.22feh	; 1CA3
+	and	al,ch	; 1CA6
+	and	al,.230bh	; 1CA8
+	jz	l1cbb	; 1CAC
+	jmps	l1cd6	; 1CAE
+
+l1cb0:	; branch target
+	add	bx,02h	; 1CB0
+	inc	byte ptr [bx]	; 1CB3
+	mov	al,[bx]	; 1CB5
+	and	al,0fh	; 1CB7
+	jz	l1ce1	; 1CB9
+
+l1cbb:	; branch target
+	mov	cl,0fh	; 1CBB
+	call	l19e1	; 1CBD
+	call	l18ae	; 1CC0
+	jnz	l1cd6	; 1CC3
+	mov	al,.230ch	; 1CC5
+	inc	al	; 1CC8
+	jz	l1ce1	; 1CCA
+	call	l1c44	; 1CCC
+	call	l18ae	; 1CCF
+	jz	l1ce1	; 1CD2
+	jmps	l1cd9	; 1CD4
+
+l1cd6:	; branch target
+	call	l1b5b	; 1CD6
+
+l1cd9:	; branch target
+	call	l176b	; 1CD9
+	xor	al,al	; 1CDC
+	jmp	l1603	; 1CDE
+
+l1ce1:	; branch target
+	call	l1607	; 1CE1
+	jmp	l181b	; 1CE4
+
+l1ce7:	; branch target
+	mov	byte ptr .230fh,01h	; 1CE7
+
+l1cec:	; branch target
+	mov	byte ptr .230ch,0ffh	; 1CEC
+	call	l176b	; 1CF1
+	mov	al,.2318h	; 1CF4
+	cmp	al,.2316h	; 1CF7
+	jc	l1d15	; 1CFB
+	cmp	al,80h	; 1CFD
+	jnz	l1d29	; 1CFF
+	call	l1c83	; 1D01
+	call	l175e	; 1D04
+	xor	ax,ax	; 1D07
+	mov	.2318h,ax	; 1D09
+	mov	[bx],al	; 1D0C
+	cmp	byte ptr .249bh,00h	; 1D0E
+	jnz	l1d29	; 1D13
+
+l1d15:	; branch target
+	call	l1722	; 1D15
+	call	l1731	; 1D18
+	jz	l1d29	; 1D1B
+	call	l1738	; 1D1D
+	call	l16c9	; 1D20
+	call	l169f	; 1D23
+	jmp	l1786	; 1D26
+
+l1d29:	; branch target
+	jmp	l1607	; 1D29
+
+l1d2c:	; branch target
+	mov	byte ptr .230fh,01h	; 1D2C
+
+l1d31:	; branch target
+	mov	byte ptr .230ch,00h	; 1D31
+	call	l17f3	; 1D36
+	mov	bx,.2499h	; 1D39
+	call	l17e3	; 1D3D
+	call	l176b	; 1D40
+	mov	al,.2318h	; 1D43
+	cmp	al,80h	; 1D46
+	jc	l1d4d	; 1D48
+	jmp	l1607	; 1D4A
+
+l1d4d:	; branch target
+	call	l1722	; 1D4D
+	call	l1731	; 1D50
+	mov	cl,00h	; 1D53
+	jnz	l1d9f	; 1D55
+	call	l16f0	; 1D57
+	mov	.2311h,al	; 1D5A
+	xor	cx,cx	; 1D5D
+	or	al,al	; 1D5F
+	jz	l1d6b	; 1D61
+	mov	cl,al	; 1D63
+	dec	cx	; 1D65
+	call	l1708	; 1D66
+	mov	cx,bx	; 1D69
+
+l1d6b:	; branch target
+	call	l1abf	; 1D6B
+	or	bx,bx	; 1D6E
+	jnz	l1d77	; 1D70
+	mov	al,02h	; 1D72
+	jmp	l1603	; 1D74
+
+l1d77:	; branch target
+	mov	.231ah,bx	; 1D77
+	xchg	bx,dx	; 1D7B
+	mov	bx,.2499h	; 1D7D
+	add	bx,10h	; 1D81
+	cmp	byte ptr .2312h,00h	; 1D84
+	mov	al,.2311h	; 1D89
+	mov	ah,00h	; 1D8C
+	jz	l1d96	; 1D8E
+	add	bx,ax	; 1D90
+	mov	[bx],dl	; 1D92
+	jmps	l1d9d	; 1D94
+
+l1d96:	; branch target
+	add	bx,ax	; 1D96
+	add	bx,ax	; 1D98
+	mov	[bx],dx	; 1D9A
+	inc	bx	; 1D9C
+
+l1d9d:	; branch target
+	mov	cl,02h	; 1D9D
+
+l1d9f:	; branch target
+	cmp	byte ptr .249bh,00h	; 1D9F
+	jz	l1da7	; 1DA4
+	ret	; 1DA6
+
+l1da7:	; branch target
+	mov	.230dh,cl	; 1DA7
+	call	l1738	; 1DAB
+	cmp	byte ptr .230fh,02h	; 1DAE
+	jnz	l1dfa	; 1DB3
+	cmp	byte ptr .230dh,02h	; 1DB5
+	jnz	l1dfa	; 1DBA
+	push	word ptr .231ah	; 1DBC
+	mov	di,.22f2h	; 1DC0
+	xor	ax,ax	; 1DC4
+	mov	cx,40h	; 1DC6
+	cld	; 1DC9
+	rep	stosw	; 1DCA
+	call	l188d	; 1DCC
+	mov	bx,.231ch	; 1DCF
+
+l1dd3:	; branch target
+	mov	.231ah,bx	; 1DD3
+	call	l16c9	; 1DD7
+	call	l16a8	; 1DDA
+	mov	bx,.231ah	; 1DDD
+	mov	byte ptr .230dh,00h	; 1DE1
+	mov	al,bl	; 1DE6
+	mov	dh,.22fdh	; 1DE8
+	and	al,dh	; 1DEC
+	inc	bx	; 1DEE
+	cmp	al,dh	; 1DEF
+	jnz	l1dd3	; 1DF1
+	pop	word ptr .231ah	; 1DF3
+	call	l1881	; 1DF7
+
+l1dfa:	; branch target
+	call	l16c9	; 1DFA
+	call	l16a8	; 1DFD
+	mov	al,.2318h	; 1E00
+	mov	bx,2316h	; 1E03
+	cmp	al,[bx]	; 1E06
+	jc	l1e10	; 1E08
+	mov	[bx],al	; 1E0A
+	inc	byte ptr [bx]	; 1E0C
+	mov	cl,02h	; 1E0E
+
+l1e10:	; branch target
+	push	ax	; 1E10
+	call	l180a	; 1E11
+	and	al,7fh	; 1E14
+	mov	[bx],al	; 1E16
+	pop	ax	; 1E18
+	cmp	al,7fh	; 1E19
+	jnz	l1e3b	; 1E1B
+	cmp	byte ptr .230fh,01h	; 1E1D
+	jnz	l1e3b	; 1E22
+	call	l1786	; 1E24
+	call	l1c83	; 1E27
+	mov	bx,249bh	; 1E2A
+	mov	al,[bx]	; 1E2D
+	or	al,al	; 1E2F
+	jnz	l1e38	; 1E31
+	dec	al	; 1E33
+	mov	.2318h,al	; 1E35
+
+l1e38:	; branch target
+	mov	byte ptr [bx],00h	; 1E38
+
+l1e3b:	; branch target
+	jmp	l1786	; 1E3B
+
+l1e3e:	; branch target
+	mov	byte ptr .230fh,00h	; 1E3E
+
+l1e43:	; branch target
+	push	cx	; 1E43
+	mov	dx,.2499h	; 1E44
+	mov	bx,21h	; 1E48
+	add	bx,dx	; 1E4B
+	mov	al,[bx]	; 1E4D
+	and	al,7fh	; 1E4F
+	push	ax	; 1E51
+	mov	al,[bx]	; 1E52
+	rcl	al,1	; 1E54
+	inc	bx	; 1E56
+	mov	al,[bx]	; 1E57
+	rcl	al,1	; 1E59
+	and	al,1fh	; 1E5B
+	mov	cl,al	; 1E5D
+	mov	al,[bx]	; 1E5F
+	rcr	al,1	; 1E61
+	rcr	al,1	; 1E63
+	rcr	al,1	; 1E65
+	rcr	al,1	; 1E67
+	and	al,0fh	; 1E69
+	mov	ch,al	; 1E6B
+	pop	ax	; 1E6D
+	inc	bx	; 1E6E
+	mov	bl,[bx]	; 1E6F
+	or	bl,bl	; 1E71
+	mov	bl,06h	; 1E73
+	jnz	l1ee0	; 1E75
+	mov	bx,20h	; 1E77
+	add	bx,dx	; 1E7A
+	mov	[bx],al	; 1E7C
+	mov	bx,0ch	; 1E7E
+	add	bx,dx	; 1E81
+	mov	al,cl	; 1E83
+	sub	al,[bx]	; 1E85
+	jnz	l1e96	; 1E87
+	mov	bx,0eh	; 1E89
+	add	bx,dx	; 1E8C
+	mov	al,ch	; 1E8E
+	sub	al,[bx]	; 1E90
+	and	al,7fh	; 1E92
+	jz	l1ed2	; 1E94
+
+l1e96:	; branch target
+	push	cx	; 1E96
+	push	dx	; 1E97
+	call	l1ba8	; 1E98
+	pop	dx	; 1E9B
+	pop	cx	; 1E9C
+	mov	bl,03h	; 1E9D
+	mov	al,.249bh	; 1E9F
+	inc	al	; 1EA2
+	jz	l1ed8	; 1EA4
+	mov	bx,0ch	; 1EA6
+	add	bx,dx	; 1EA9
+	mov	[bx],cl	; 1EAB
+	mov	bx,0eh	; 1EAD
+	add	bx,dx	; 1EB0
+	mov	[bx],ch	; 1EB2
+	call	l1b51	; 1EB4
+	mov	al,.249bh	; 1EB7
+	inc	al	; 1EBA
+	jnz	l1ed2	; 1EBC
+	pop	cx	; 1EBE
+	push	cx	; 1EBF
+	mov	bl,04h	; 1EC0
+	inc	cl	; 1EC2
+	jz	l1ed8	; 1EC4
+	call	l1c44	; 1EC6
+	mov	bl,05h	; 1EC9
+	mov	al,.249bh	; 1ECB
+	inc	al	; 1ECE
+	jz	l1ed8	; 1ED0
+
+l1ed2:	; branch target
+	pop	cx	; 1ED2
+	xor	al,al	; 1ED3
+	jmp	l1603	; 1ED5
+
+l1ed8:	; branch target
+	push	bx	; 1ED8
+	call	l180a	; 1ED9
+	mov	byte ptr [bx],0c0h	; 1EDC
+	pop	bx	; 1EDF
+
+l1ee0:	; branch target
+	pop	cx	; 1EE0
+	mov	al,bl	; 1EE1
+	mov	.249bh,al	; 1EE3
+	jmp	l181b	; 1EE6
+
+l1ee9:	; branch target
+	mov	cl,0ffh	; 1EE9
+	call	l1e3e	; 1EEB
+	jnz	l1ef3	; 1EEE
+	call	l1cec	; 1EF0
+
+l1ef3:	; branch target
+	ret	; 1EF3
+
+l1ef4:	; branch target
+	mov	cl,00h	; 1EF4
+	call	l1e3e	; 1EF6
+	jnz	l1efe	; 1EF9
+	call	l1d31	; 1EFB
+
+l1efe:	; branch target
+	ret	; 1EFE
+
+l1eff:	; branch target
+	xchg	bx,dx	; 1EFF
+	add	bx,dx	; 1F01
+	mov	cl,[bx]	; 1F03
+	mov	ch,00h	; 1F05
+	mov	bx,0ch	; 1F07
+	add	bx,dx	; 1F0A
+	mov	ah,[bx]	; 1F0C
+	mov	al,00h	; 1F0E
+	shr	ax,1	; 1F10
+	and	ah,0fh	; 1F12
+	add	cx,ax	; 1F15
+	mov	bx,0eh	; 1F17
+	add	bx,dx	; 1F1A
+	mov	al,[bx]	; 1F1C
+	mov	ah,10h	; 1F1E
+	mul	ah	; 1F20
+	push	ax	; 1F22
+	add	ch,al	; 1F23
+	pushf	; 1F25
+	pop	bx	; 1F26
+	mov	al,bl	; 1F27
+	pop	bx	; 1F29
+	or	al,bl	; 1F2A
+	and	al,01h	; 1F2C
+	ret	; 1F2E
+
+l1f2f:	; branch target
+	mov	cl,0ch	; 1F2F
+	call	l19e1	; 1F31
+	mov	bx,.2499h	; 1F34
+	mov	dx,21h	; 1F38
+	add	bx,dx	; 1F3B
+	push	bx	; 1F3D
+	mov	[bx],dh	; 1F3E
+	inc	bx	; 1F40
+	mov	[bx],dh	; 1F41
+	inc	bx	; 1F43
+	mov	[bx],dh	; 1F44
+
+l1f46:	; branch target
+	call	l18ae	; 1F46
+	jz	l1f6d	; 1F49
+	call	l17fe	; 1F4B
+	mov	dx,0fh	; 1F4E
+	call	l1eff	; 1F51
+	pop	bx	; 1F54
+	push	bx	; 1F55
+	mov	dl,al	; 1F56
+	mov	ax,cx	; 1F58
+	sub	ax,[bx]	; 1F5A
+	mov	al,dl	; 1F5C
+	sbb	al,02h[bx]	; 1F5E
+	jc	l1f68	; 1F61
+	mov	02h[bx],dl	; 1F63
+	mov	[bx],cx	; 1F66
+
+l1f68:	; branch target
+	call	l19ea	; 1F68
+	jmps	l1f46	; 1F6B
+
+l1f6d:	; branch target
+	pop	bx	; 1F6D
+	ret	; 1F6E
+
+l1f6f:	; branch target
+	mov	bx,.2499h	; 1F6F
+	mov	dx,20h	; 1F73
+	call	l1eff	; 1F76
+	mov	bx,21h	; 1F79
+	add	bx,dx	; 1F7C
+	mov	[bx],cx	; 1F7E
+	mov	02h[bx],al	; 1F80
+	ret	; 1F83
+
+l1f84:	; branch target
+	mov	bx,.22eah	; 1F84
+	mov	cl,.24a4h	; 1F88
+	ror	bx,cl	; 1F8C
+	push	bx	; 1F8E
+	xchg	bx,dx	; 1F8F
+	call	l1636	; 1F91
+	pop	bx	; 1F94
+	jnz	l1f9a	; 1F95
+	call	l1625	; 1F97
+
+l1f9a:	; branch target
+	rcr	bl,1	; 1F9A
+	jc	l2005	; 1F9C
+	mov	cx,.22eah	; 1F9E
+	call	l17af	; 1FA2
+	mov	.22eah,bx	; 1FA5
+	jmp	l195c	; 1FA9
+
+l1fac:	; branch target
+	mov	al,.2310h	; 1FAC
+	mov	.24a4h,al	; 1FAF
+	jmps	l1f84	; 1FB2
+
+l1fb4:	; branch target
+	call	l0c1a	; 1FB4
+	jmps	l1fbc	; 1FB7
+
+l1fb9:	; branch target
+	call	l0c1f	; 1FB9
+
+l1fbc:	; branch target
+	mov	bx,.2499h	; 1FBC
+	mov	byte ptr .2396h,00h	; 1FC0
+	test	byte ptr 08h[bx],80h	; 1FC5
+	jz	l1fd4	; 1FC9
+	and	byte ptr 08h[bx],7fh	; 1FCB
+	mov	byte ptr .2396h,60h	; 1FCF
+
+l1fd4:	; branch target
+	mov	byte ptr .2313h,0ffh	; 1FD4
+	mov	bx,.2499h	; 1FD9
+	mov	al,[bx]	; 1FDD
+	and	al,1fh	; 1FDF
+	dec	al	; 1FE1
+	mov	.2310h,al	; 1FE3
+	cmp	al,1eh	; 1FE6
+	jnc	l1ffc	; 1FE8
+	mov	al,.24a4h	; 1FEA
+	mov	.2314h,al	; 1FED
+	mov	al,[bx]	; 1FF0
+	mov	.2315h,al	; 1FF2
+	and	al,0e0h	; 1FF5
+	mov	[bx],al	; 1FF7
+	call	l1fac	; 1FF9
+
+l1ffc:	; branch target
+	mov	al,.24a5h	; 1FFC
+	mov	bx,.2499h	; 1FFF
+	or	[bx],al	; 2003
+
+l2005:	; branch target
+	ret	; 2005
+
+l2006:	; branch target
+	cmp	byte ptr .2396h,60h	; 2006
+	jnz	l2014	; 200B
+	mov	bx,.2499h	; 200D
+	mov	byte ptr [bx],00h	; 2011
+
+l2014:	; branch target
+	ret	; 2014
+
+l2015:	; branch target
+	test	word ptr .2202h,0ffffh	; 2015
+	jnz	l2021	; 201B
+	mov	word ptr .2202h,cs	; 201D
+
+l2021:	; branch target
+	xor	bx,bx	; 2021
+	mov	.22e8h,bx	; 2023
+	mov	.22eah,bx	; 2027
+	mov	bl,.24b7h	; 202B
+	mov	.24a4h,bl	; 202F
+	jmp	l1f84	; 2033
+	call	l1fb4	; 2036
+	call	l1814	; 2039
+	cmp	byte ptr .24a5h,00h	; 203C
+	jz	l204e	; 2041
+	mov	word ptr .2399h,0feh	; 2043
+	mov	byte ptr .2397h,0ffh	; 2049
+
+l204e:	; branch target
+	call	l1b51	; 204E
+	call	l2090	; 2051
+	test	byte ptr .2397h,0ffh	; 2054
+	jnz	l205c	; 2059
+
+l205b:	; branch target
+	ret	; 205B
+
+l205c:	; branch target
+	mov	byte ptr .2397h,00h	; 205C
+	cmp	word ptr .2399h,0feh	; 2061
+	jz	l205b	; 2067
+	mov	bx,.2398h	; 2069
+	and	bl,0fch	; 206D
+	dec	bx	; 2070
+	mov	.24a6h,bx	; 2071
+	mov	byte ptr .2396h,60h	; 2075
+	mov	bx,.2499h	; 207A
+	mov	byte ptr [bx],00h	; 207E
+	mov	cl,0fh	; 2081
+	call	l19cf	; 2083
+	call	l19ea	; 2086
+	call	l1b59	; 2089
+	call	l2090	; 208C
+	ret	; 208F
+
+l2090:	; branch target
+	call	l18ae	; 2090
+	jz	l205b	; 2093
+	pop	bx	; 2095
+	cmp	byte ptr .2396h,60h	; 2096
+	jnz	l20af	; 209B
+	mov	bx,.2499h	; 209D
+	mov	al,0ah[bx]	; 20A1
+	and	al,80h	; 20A4
+	jnz	l20af	; 20A6
+	mov	.2396h,al	; 20A8
+	mov	al,0ffh	; 20AB
+	jmps	l212d	; 20AD
+
+l20af:	; branch target
+	ret	; 20AF
+	call	l1fb4	; 20B0
+	jmp	l1ba8	; 20B3
+	call	l0c1a	; 20B6
+	mov	bx,.249dh	; 20B9
+	mov	.24abh,bx	; 20BD
+	mov	cl,00h	; 20C1
+	mov	bx,.2499h	; 20C3
+	cmp	byte ptr [bx],3fh	; 20C7
+	jz	l20dc	; 20CA
+	call	l1754	; 20CC
+	cmp	byte ptr [bx],3fh	; 20CF
+	jz	l20d7	; 20D2
+	call	l1814	; 20D4
+
+l20d7:	; branch target
+	call	l1fbc	; 20D7
+	mov	cl,0fh	; 20DA
+
+l20dc:	; branch target
+	call	l19e1	; 20DC
+	jmps	l20f7	; 20DF
+	mov	bx,.24abh	; 20E1
+	mov	.249dh,bx	; 20E5
+	mov	bx,.24a9h	; 20E9
+	mov	.2499h,bx	; 20ED
+	call	l1fb4	; 20F1
+	call	l19ea	; 20F4
+
+l20f7:	; branch target
+	jmp	l189a	; 20F7
+	call	l1fb4	; 20FA
+	call	l1a9c	; 20FD
+	jmp	l19b8	; 2100
+	call	l1fb4	; 2103
+	call	l2006	; 2106
+	jmp	l1ce7	; 2109
+	call	l1fb4	; 210C
+	jmp	l1d2c	; 210F
+	call	l1fb4	; 2112
+	call	l1814	; 2115
+	jmp	l1c44	; 2118
+	call	l1fb4	; 211B
+	call	l1b13	; 211E
+	jmp	l19b8	; 2121
+	mov	bx,.22eah	; 2124
+	jmps	l2150	; 2128
+	mov	al,.24a4h	; 212A
+
+l212d:	; branch target
+	jmp	l1603	; 212D
+	mov	.24a0h,dx	; 2130
+	jmp	l1881	; 2134
+	mov	bx,.22f8h	; 2137
+	jmps	l2150	; 213B
+	mov	bx,.22e8h	; 213D
+	jmps	l2150	; 2141
+	call	l1fb4	; 2143
+	call	l1b3b	; 2146
+	jmp	l19b8	; 2149
+	mov	bx,.22f4h	; 214C
+
+l2150:	; branch target
+	mov	.249bh,bx	; 2150
+	ret	; 2154
+	mov	al,.2310h	; 2155
+	cmp	al,0ffh	; 2158
+	jnz	l2161	; 215A
+	mov	al,.24a5h	; 215C
+	jmps	l212d	; 215F
+
+l2161:	; branch target
+	and	al,1fh	; 2161
+	mov	.24a5h,al	; 2163
+	ret	; 2166
+	call	l1fb9	; 2167
+	call	l2006	; 216A
+	jmp	l1ee9	; 216D
+	call	l1fb9	; 2170
+	jmp	l1ef4	; 2173
+	call	l1fb9	; 2176
+	jmp	l1f2f	; 2179
+	call	l0c1f	; 217C
+	jmp	l1f6f	; 217F
+	mov	ax,.2499h	; 2182
+	not	ax	; 2185
+	push	ax	; 2187
+	mov	bx,22eah	; 2188
+	and	ax,[bx]	; 218B
+	mov	[bx],ax	; 218D
+	pop	ax	; 218F
+	mov	bx,22e8h	; 2190
+	and	ax,[bx]	; 2193
+	mov	[bx],ax	; 2195
+	ret	; 2197
+	cmp	byte ptr .2313h,00h	; 2198
+	jz	l21c3	; 219D
+	mov	bx,.2499h	; 219F
+	cmp	byte ptr .2396h,60h	; 21A3
+	jnz	l21ae	; 21A8
+	or	byte ptr 08h[bx],80h	; 21AA
+
+l21ae:	; branch target
+	mov	byte ptr [bx],00h	; 21AE
+	mov	al,.2315h	; 21B1
+	or	al,al	; 21B4
+	jz	l21c3	; 21B6
+	mov	[bx],al	; 21B8
+	mov	al,.2314h	; 21BA
+	mov	.2310h,al	; 21BD
+	call	l1fac	; 21C0
+
+l21c3:	; branch target
+	cmp	byte ptr .2327h,0ffh	; 21C3
+	jnz	l21cd	; 21C8
+	call	l0c27	; 21CA
+
+l21cd:	; branch target
+	mov	ax,.2465h	; 21CD
+	test	ax,ax	; 21D0
+	jnz	l21d7	; 21D2
+	mov	ax,.249bh	; 21D4
+
+l21d7:	; branch target
+	mov	bx,ax	; 21D7
+
+l21d9:	; branch target
+	ret	; 21D9
+	call	l1fb9	; 21DA
+	mov	byte ptr .230fh,02h	; 21DD
+	mov	cl,00h	; 21E2
+	call	l1e43	; 21E4
+	jnz	l21d9	; 21E7
+	jmp	l1d31	; 21E9
+
+bdos_workspace:	; bdos_workspace
+	db	000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h	; 21EC ................
+	db	000h,000h,000h,000h,022h,016h,000h,000h,0bbh,00bh,0c3h,00bh,0cbh,00bh,0d3h,00bh	; 21FC ...."...........
+
+cmd_descriptors:	; cmd_descriptors
+	db	000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h	; 220C ................
+	db	000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h	; 221C ................
+	db	000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h	; 222C ................
+	db	000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h	; 223C ................
+	db	000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h	; 224C ................
+	db	000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h	; 225C ................
+	db	000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h	; 226C ................
+	db	000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h	; 227C ................
+	db	000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h	; 228C ................
+	db	000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h	; 229C ................
+	db	000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h	; 22AC ................
+	db	000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h	; 22BC ................
+	db	000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h	; 22CC ................
+	db	000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,0e5h,000h,000h,000h,000h	; 22DC ................
+	db	000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h	; 22EC ................
+	db	000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h	; 22FC ................
+	db	000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h	; 230C ................
+	db	000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h	; 231C ................
+	db	000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h	; 232C ................
+	db	000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h	; 233C ................
+	db	000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h	; 234C ................
+	db	000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h	; 235C ................
+	db	000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h	; 236C ................
+	db	000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h	; 237C ................
+	db	000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h	; 238C ................
+	db	000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h	; 239C ................
+	db	000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h	; 23AC ................
+	db	000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h	; 23BC ................
+	db	000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h	; 23CC ................
+	db	000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h	; 23DC ................
+	db	000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h	; 23EC ................
+	db	000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h	; 23FC ................
+	db	000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h	; 240C ................
+	db	000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h	; 241C ................
+	db	000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h	; 242C ................
+	db	000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h	; 243C ................
+	db	000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h	; 244C ................
+	db	000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h	; 245C ................
+	db	000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h	; 246C ................
+	db	000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h	; 247C ................
+	db	000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h	; 248C ................
+	db	000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h	; 249C ................
+	db	000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h	; 24AC ................
+	db	000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h	; 24BC ................
+	db	000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h	; 24CC ................
+	db	000h,000h,000h,000h,050h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h	; 24DC ....P...........
+	db	000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h	; 24EC ................
+	db	000h,000h,000h,000h	; 24FC ....
+	org	00000h
+cold_entry:
+	org	00003h
+abort_entry:
+	org	00006h
+hot_entry:
+	org	00009h
+startup_command:
+	org	0008bh
+l008b:
+	org	00092h
+l0092:
+	org	00098h
+l0098:
+	org	0009eh
+l009e:
+	org	000a0h
+l00a0:
+	org	000a6h
+l00a6:
+	org	000afh
+l00af:
+	org	000b4h
+l00b4:
+	org	000bbh
+l00bb:
+	org	000c3h
+l00c3:
+	org	000cah
+l00ca:
+	org	000d2h
+l00d2:
+	org	000d6h
+l00d6:
+	org	000dah
+l00da:
+	org	000e0h
+l00e0:
+	org	000e8h
+l00e8:
+	org	000eah
+l00ea:
+	org	000f3h
+l00f3:
+	org	000fbh
+l00fb:
+	org	00100h
+l0100:
+	org	00104h
+l0104:
+	org	00108h
+l0108:
+	org	0010dh
+l010d:
+	org	00111h
+l0111:
+	org	00114h
+l0114:
+	org	0011bh
+l011b:
+	org	0011ch
+l011c:
+	org	0013eh
+l013e:
+	org	00144h
+l0144:
+	org	0014ah
+l014a:
+	org	0014fh
+l014f:
+	org	00159h
+l0159:
+	org	0015ah
+l015a:
+	org	0016dh
+l016d:
+	org	001b9h
+l01b9:
+	org	001c4h
+l01c4:
+	org	001d0h
+l01d0:
+	org	001dah
+l01da:
+	org	001e3h
+l01e3:
+	org	001edh
+l01ed:
+	org	001f5h
+l01f5:
+	org	001f9h
+l01f9:
+	org	001fdh
+l01fd:
+	org	00207h
+l0207:
+	org	00209h
+l0209:
+	org	0020ch
+l020c:
+	org	00214h
+l0214:
+	org	00228h
+l0228:
+	org	0022fh
+l022f:
+	org	00236h
+l0236:
+	org	00242h
+l0242:
+	org	00249h
+l0249:
+	org	0024eh
+l024e:
+	org	00251h
+l0251:
+	org	00258h
+l0258:
+	org	00268h
+l0268:
+	org	00269h
+l0269:
+	org	0026dh
+l026d:
+	org	00275h
+l0275:
+	org	00276h
+l0276:
+	org	00279h
+l0279:
+	org	00299h
+l0299:
+	org	0029eh
+l029e:
+	org	002a6h
+l02a6:
+	org	002abh
+l02ab:
+	org	002b0h
+l02b0:
+	org	002c0h
+l02c0:
+	org	002d8h
+l02d8:
+	org	002e0h
+l02e0:
+	org	002e4h
+l02e4:
+	org	002e7h
+l02e7:
+	org	002edh
+l02ed:
+	org	002fch
+l02fc:
+	org	002ffh
+l02ff:
+	org	00308h
+l0308:
+	org	00314h
+command_resume:
+	org	00322h
+command_start:
+	org	00348h
+l0348:
+	org	00353h
+l0353:
+	org	0036dh
+l036d:
+	org	00394h
+l0394:
+	org	003aah
+l03aa:
+	org	003afh
+l03af:
+	org	003b2h
+l03b2:
+	org	003b5h
+l03b5:
+	org	003bch
+l03bc:
+	org	003ceh
+l03ce:
+	org	003f1h
+l03f1:
+	org	0041eh
+l041e:
+	org	0042bh
+l042b:
+	org	0042fh
+l042f:
+	org	0043bh
+l043b:
+	org	00452h
+l0452:
+	org	0045bh
+l045b:
+	org	0046bh
+l046b:
+	org	0046ch
+l046c:
+	org	0046fh
+l046f:
+	org	00487h
+l0487:
+	org	0048ah
+l048a:
+	org	0049ah
+l049a:
+	org	004a7h
+l04a7:
+	org	004afh
+l04af:
+	org	004bah
+l04ba:
+	org	004bfh
+l04bf:
+	org	004dfh
+l04df:
+	org	004edh
+l04ed:
+	org	0050fh
+l050f:
+	org	00517h
+l0517:
+	org	0051ch
+l051c:
+	org	00538h
+l0538:
+	org	0053ah
+l053a:
+	org	0054eh
+l054e:
+	org	0054fh
+l054f:
+	org	0055ah
+l055a:
+	org	00573h
+l0573:
+	org	00576h
+l0576:
+	org	00592h
+l0592:
+	org	005a2h
+l05a2:
+	org	005bah
+l05ba:
+	org	005beh
+l05be:
+	org	005c1h
+l05c1:
+	org	005c7h
+l05c7:
+	org	005ddh
+l05dd:
+	org	005f8h
+l05f8:
+	org	00614h
+l0614:
+	org	00626h
+l0626:
+	org	00628h
+l0628:
+	org	0062dh
+l062d:
+	org	00632h
+l0632:
+	org	0063ah
+l063a:
+	org	0063dh
+l063d:
+	org	00645h
+l0645:
+	org	00668h
+l0668:
+	org	0066bh
+l066b:
+	org	00674h
+l0674:
+	org	00690h
+l0690:
+	org	006dah
+l06da:
+	org	006e5h
+l06e5:
+	org	006e8h
+l06e8:
+	org	006eeh
+l06ee:
+	org	006f8h
+l06f8:
+	org	0072eh
+l072e:
+	org	00739h
+l0739:
+	org	0073ch
+l073c:
+	org	0074eh
+l074e:
+	org	00751h
+ccp_workspace:
+	org	00800h
+transient_extension:
+	org	02500h
+bios_vectors:
+	org	02515h
+l2515:
+	org	02518h
+l2518:
+	org	0251bh
+l251b:
+	org	0251eh
+l251e:
+	org	02521h
+l2521:
+	org	02524h
+l2524:
+	org	02527h
+l2527:
+	org	0252ah
+l252a:
+	org	02530h
+l2530:
+	org	02533h
+l2533:
+	org	02536h
+l2536:
+	org	02539h
+l2539:
+	org	0253ch
+l253c:
+	org	0257eh
+warm_boot:
+	org	0258bh
+console_input:
+	org	02590h
+console_output:
+	org	02595h
+console_status:
+	org	0259ch
+reader_input:
+	org	025a1h
+punch_output:
+	org	025a6h
+list_output:
+	org	025abh
+list_status:
+	org	025b2h
+l25b2:
+	org	025bbh
+l25bb:
+	org	025c1h
+l25c1:
+	org	025c8h
+l25c8:
+	org	025ceh
+l25ce:
+	org	025dch
+l25dc:
+	org	025e3h
+l25e3:
+	org	025eah
+l25ea:
+	org	025f7h
+l25f7:
+	org	0260dh
+l260d:
+	org	0260fh
+l260f:
+	org	02610h
+l2610:
+	org	02611h
+l2611:
+	org	0261eh
+l261e:
+	org	02620h
+l2620:
+	org	0263dh
+l263d:
+	org	02643h
+l2643:
+	org	0265dh
+l265d:
+	org	02667h
+l2667:
+	org	0267fh
+l267f:
+	org	0269fh
+l269f:
+	org	026aeh
+l26ae:
+	org	026b0h
+l26b0:
+	org	026bch
+l26bc:
+	org	026d3h
+l26d3:
+	org	026d9h
+l26d9:
+	org	026dfh
+l26df:
+	org	026feh
+l26fe:
+	org	02707h
+l2707:
+	org	02709h
+l2709:
+	org	0270ch
+l270c:
+	org	0271ch
+l271c:
+	org	02758h
+l2758:
+	org	0275fh
+l275f:
+	org	02771h
+l2771:
+	org	0277dh
+l277d:
+	org	02794h
+l2794:
+	org	027a4h
+l27a4:
+	org	027b9h
+l27b9:
+	org	027c1h
+l27c1:
+	org	027cfh
+l27cf:
+	org	027d7h
+l27d7:
+	org	027e0h
+l27e0:
+	org	0280ch
+l280c:
+	org	0282dh
+l282d:
+	org	0287dh
+l287d:
+	org	028a1h
+l28a1:
+	org	028c7h
+l28c7:
+	org	028d1h
+l28d1:
+	org	028d5h
+l28d5:
+	org	028dah
+l28da:
+	org	028e0h
+l28e0:
+	org	02915h
+l2915:
+	org	02979h
+l2979:
+	org	02992h
+l2992:
+	org	029ach
+l29ac:
+	org	029b3h
+l29b3:
+	org	029ceh
+l29ce:
+	org	029d2h
+l29d2:
+	org	029f0h
+l29f0:
+	org	029f2h
+l29f2:
+	org	02a11h
+l2a11:
+	org	02a14h
+select_disk:
+	org	02a1ch
+disk_read:
+	org	02a21h
+disk_write:
+	org	02a26h
+disk_home:
+	org	02a2fh
+l2a2f:
+	org	02a7ah
+l2a7a:
+	org	02a80h
+set_track:
+	org	02a85h
+set_sector:
+	org	02a8ah
+translate_sector:
+	org	02a8dh
+set_dma:
+	org	02a92h
+set_dma_segment:
+	org	02a97h
+get_memory_regions:
+	org	02a9bh
+get_iobyte:
+	org	02a9eh
+set_iobyte:
+	org	02aa9h
+l2aa9:
+	org	02aadh
+l2aad:
+	org	02ae0h
+l2ae0:
+	org	02ae4h
+l2ae4:
+	org	02af5h
+l2af5:
+	org	02b07h
+l2b07:
+	org	02b18h
+l2b18:
+	org	02b23h
+l2b23:
+	org	02b3ah
+l2b3a:
+	org	02b46h
+l2b46:
+	org	02b5eh
+l2b5e:
+	org	02b5fh
+l2b5f:
+	org	02b7bh
+l2b7b:
+	org	02bach
+l2bac:
+	org	02bafh
+l2baf:
+	org	02bb5h
+l2bb5:
+	org	02bbah
+l2bba:
+	org	02bdch
+l2bdc:
+	org	02be6h
+l2be6:
+	org	02be8h
+l2be8:
+	org	02bebh
+l2beb:
+	org	02bf0h
+l2bf0:
+	org	02c11h
+l2c11:
+	org	02c13h
+l2c13:
+	org	02c16h
+l2c16:
+	org	02c2bh
+l2c2b:
+	org	02c40h
+l2c40:
+	org	02c45h
+l2c45:
+	org	02c5dh
+l2c5d:
+	org	02c63h
+l2c63:
+	org	02c90h
+l2c90:
+	org	02c9ah
+l2c9a:
+	org	02ca5h
+l2ca5:
+	org	02cafh
+l2caf:
+	org	02cc7h
+l2cc7:
+	org	02ccah
+l2cca:
+	org	02cd6h
+l2cd6:
+	org	02cdah
+l2cda:
+	org	02cdbh
+l2cdb:
+	org	02ce5h
+l2ce5:
+	org	02d37h
+l2d37:
+	org	02d7eh
+l2d7e:
+	org	02da2h
+l2da2:
+	org	02dcbh
+l2dcb:
+	org	02de4h
+l2de4:
+	org	02e0bh
+l2e0b:
+	org	02e17h
+l2e17:
+	org	02e1fh
+l2e1f:
+	org	02e3ah
+l2e3a:
+	org	02e3dh
+l2e3d:
+	org	02e74h
+l2e74:
+	org	02e89h
+l2e89:
+	org	02e94h
+l2e94:
+	org	02e98h
+l2e98:
+	org	02eb0h
+l2eb0:
+	org	02eb8h
+l2eb8:
+	org	02ecdh
+l2ecd:
+	org	02ed4h
+l2ed4:
+	org	02edch
+l2edc:
+	org	02ee3h
+l2ee3:
+	org	02f2dh
+l2f2d:
+	org	02f50h
+l2f50:
+	org	02f58h
+l2f58:
+	org	02f5fh
+l2f5f:
+	org	02f68h
+l2f68:
+	org	02f72h
+l2f72:
+	org	02f86h
+l2f86:
+	org	02f8ch
+l2f8c:
+	org	02f99h
+l2f99:
+	org	02fadh
+l2fad:
+	org	02fc6h
+l2fc6:
+	org	02fdbh
+l2fdb:
+	org	02fdfh
+l2fdf:
+	org	02fe0h
+l2fe0:
+	org	02fe6h
+l2fe6:
+	org	02fedh
+l2fed:
+	org	0300bh
+l300b:
+	org	0300ch
+l300c:
+	org	0302bh
+l302b:
+	org	0303ah
+l303a:
+	org	03059h
+l3059:
+	org	03067h
+l3067:
+	org	03069h
+resident_data:
+	org	03757h
+cold_boot:
+	org	0378bh
+l378b:
+	org	037f6h
+l37f6:
+	org	037f7h
+l37f7:
+	org	03822h
+l3822:
+	org	03839h
+l3839:
+	org	03885h
+l3885:
+	org	03897h
+l3897:
+	org	038a1h
+l38a1:
+	org	038bah
+l38ba:
+	org	038e6h
+l38e6:
+	org	038fah
+l38fa:
+	org	0392ah
+l392a:
+	org	0393ch
+l393c:
+	org	0394eh
+l394e:
+	org	0394fh
+l394f:
+	org	0395bh
+l395b:
+	org	0398fh
+l398f:
+	org	03992h
+l3992:
+	org	039b0h
+l39b0:
+	org	039b2h
+l39b2:
+	org	039c0h
+l39c0:
+	org	039c1h
+l39c1:
+	org	039f4h
+l39f4:
+	org	039f5h
+l39f5:
+	org	03a01h
+l3a01:
+	org	03a13h
+l3a13:
+	org	03a17h
+l3a17:
+	org	03a41h
+l3a41:
+	org	03a42h
+l3a42:
+	org	03a4bh
+l3a4b:
+	org	03a58h
+l3a58:
+	org	03a59h
+l3a59:
+	org	03a65h
+l3a65:
+	org	03a84h
+l3a84:
+	org	03a91h
+l3a91:
+	org	03a9bh
+l3a9b:
+	org	03aa5h
+l3aa5:
+	org	03aa6h
+l3aa6:
+	org	03ac9h
+l3ac9:
+	org	03ad9h
+l3ad9:
+	org	03aefh
+l3aef:
+	org	03b29h
+l3b29:
+	org	03b54h
+l3b54:
+	org	03b61h
+l3b61:
+	org	03b62h
+l3b62:
+	org	03b71h
+l3b71:
+	org	03b72h
+l3b72:
+	org	03b76h
+l3b76:
+	org	03b7dh
+l3b7d:
+	org	03b7fh
+l3b7f:
+	org	03b88h
+l3b88:
+	org	03b99h
+l3b99:
+	org	03ba6h
+l3ba6:
+	org	03babh
+l3bab:
+	org	03bb3h
+l3bb3:
+	org	03bbah
+l3bba:
+	org	03bc4h
+startup_messages:
+	end
